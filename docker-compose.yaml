@@ -1,0 +1,29 @@
+version: '3.8'
+services:
+  group-management-api:
+    depends_on:
+      - postgres-data
+    build:
+      context: ./group-management-api
+    environment:
+      - POSTGRES_HOST=postgres-data
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    ports:
+    - ${API_PORT}:3000
+    networks:
+      - group-management
+  postgres-data:
+    build:
+      context: ./postgres-data
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    networks:
+      - group-management
+
+volumes:
+  logs:
+
+networks:
+  group-management:
