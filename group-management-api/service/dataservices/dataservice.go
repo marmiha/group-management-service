@@ -1,3 +1,5 @@
+// Interfaces that represent data sources for our domain/business models. Any implementations that will suffice this
+// contract will be able to communicate with the domain logic as long as the function signatures are the same.
 package dataservices
 
 import "group-management-api/domain/model"
@@ -20,6 +22,7 @@ type GroupDataInterface interface {
 
 	GetById(id int) (*model.Group, error)
 	GetByName(name string) (*model.Group, error)
+	GetByUser(userId int) (*model.Group, error)
 
 	GetList(page int, limit int) (*[]model.Group, error)
 }
