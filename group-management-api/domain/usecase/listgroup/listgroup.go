@@ -12,15 +12,17 @@ type ListGroupUseCase struct {
 
 }
 
-func (lg ListGroupUseCase) Find(id model.GroupID) (user *model.User, err error) {
+func (lg ListGroupUseCase) Find(id model.GroupID) (*model.User, error) {
 	panic("implement me")
 }
 
-func (lg ListGroupUseCase) GroupsList() (groupList []model.Group, err error) {
+func (lg ListGroupUseCase) GroupsList() (*[]model.Group, error) {
 	panic("implement me")
 }
 
-func (lg ListGroupUseCase) ListUsersOfGroup(id model.GroupID) (userList []model.User, err error) {
+func (lg ListGroupUseCase) ListUsersOfGroup(id model.GroupID) (*[]model.User, error) {
 	panic("implement me")
 }
+
+
 

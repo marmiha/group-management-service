@@ -13,11 +13,11 @@ type ManageGroupUseCase struct {
 
 }
 
-func (mg ManageGroupUseCase) CreateGroup(p payload.CreateGroupPayload) (group *model.Group, err error) {
+func (mg ManageGroupUseCase) CreateGroup(p payload.CreateGroupPayload) (*model.Group, error) {
 	panic("implement me")
 }
 
-func (mg ManageGroupUseCase) ModifyGroup(id model.GroupID, p payload.ModifyGroupPayload) (group *model.Group, err error) {
+func (mg ManageGroupUseCase) ModifyGroup(id model.GroupID, p payload.ModifyGroupPayload) (*model.Group, error) {
 	panic("implement me")
 }
 

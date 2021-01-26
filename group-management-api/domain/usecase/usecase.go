@@ -8,7 +8,7 @@ import (
 // Registration business logic.
 type UserRegistrationUseCaseInterface interface {
 	// Registration related functions.
-	RegisterUser(p payload.RegisterUserPayload) (user *model.User, err error)
+	RegisterUser(p payload.RegisterUserPayload) (*model.User, error)
 	UnregisterUser(p payload.UnregisterUserPayload) error
 	// Password and access related functions.
 	ChangePassword(p payload.ChangePasswordPayload) error
@@ -23,8 +23,8 @@ type ManageUserUseCaseInterface interface {
 // Group management business logic.
 type ManageGroupUseCaseInterface interface {
 	// Basic functionalities.
-	CreateGroup(p payload.CreateGroupPayload) (group *model.Group, err error)
-	ModifyGroup(id model.GroupID, p payload.ModifyGroupPayload) (group *model.Group, err error)
+	CreateGroup(p payload.CreateGroupPayload) (*model.Group, error)
+	ModifyGroup(id model.GroupID, p payload.ModifyGroupPayload) (*model.Group, error)
 
 	// User management inside groups.
 	RemoveUserFromGroup(user *model.User) error
@@ -33,14 +33,14 @@ type ManageGroupUseCaseInterface interface {
 
 // User listing business logic.
 type ListUserUseCaseInterface interface {
-	Find(id model.UserID) (user *model.User, err error)
-	UsersList() (usersList []model.User, err error)
+	Find(id model.UserID) (*model.User, error)
+	UsersList() (*[]model.User, error)
 }
 
 // Group listing business logic.
 type ListGroupUseCaseInterface interface {
-	Find(id model.GroupID) (user *model.User, err error)
-	GroupsList() (groupList []model.Group, err error)
+	Find(id model.GroupID) (*model.User, error)
+	GroupsList() (*[]model.Group, error)
 
-	ListUsersOfGroup(id model.GroupID) (userList []model.User, err error)
+	ListUsersOfGroup(id model.GroupID) (*[]model.User, error)
 }

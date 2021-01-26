@@ -13,7 +13,7 @@ type UserRegistrationUseCase struct {
 
 }
 
-func (ur UserRegistrationUseCase) RegisterUser(p payload.RegisterUserPayload) (user *model.User, err error) {
+func (ur UserRegistrationUseCase) RegisterUser(p payload.RegisterUserPayload) (*model.User, error) {
 	panic("implement me")
 }
 
