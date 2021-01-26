@@ -27,4 +27,7 @@ type GroupDataInterface interface {
 
 	GetList(page int, limit int) (*[]model.Group, error)
 	GetListAll() (*[]model.Group, error)
+
+	AddUserToGroup(user UserDataInterface, groupID model.GroupID) (*model.Group, error)
+	RemoveUserFromGroup(user UserDataInterface)
 }
