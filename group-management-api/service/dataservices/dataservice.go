@@ -13,7 +13,7 @@ type UserDataInterface interface {
 	GetByEmail(email string) (*model.User, error)
 
 	GetList(page int, limit int) (*[]model.Group, error)
-	GetListAll() (*[]model.Group, error)
+	GetListAll() (*[]model.User, error)
 }
 
 type GroupDataInterface interface {

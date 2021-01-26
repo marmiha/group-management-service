@@ -14,10 +14,18 @@ type ListUserUseCase struct {
 }
 
 func (lu ListUserUseCase) Find(id model.UserID) (*model.User, error) {
-	panic("implement me")
+	user, err := lu.UserData.GetById(id)
+	if err != nil {
+		return nil ,err
+	}
+	return user, nil
 }
 
 func (lu ListUserUseCase) UsersList() (*[]model.User, error) {
-	panic("implement me")
+	users, err := lu.UserData.GetListAll()
+	if err != nil {
+		return nil, err
+	}
+	return users, nil
 }
 
