@@ -6,7 +6,7 @@ import (
 )
 
 // Registration business logic.
-type RegistrationUseCaseInterface interface {
+type UserRegistrationUseCaseInterface interface {
 	// Registration related functions.
 	RegisterUser(p payload.RegisterUserPayload) (user *model.User, err error)
 	UnregisterUser(p payload.UnregisterUserPayload) error
