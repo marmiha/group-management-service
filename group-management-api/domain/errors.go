@@ -11,5 +11,5 @@ var (
 	ErrNoResult                   = errors.New("NoResult")
 	ErrInvalidLoginCredentials    = errors.New("InvalidLoginCredentials")
 	ErrUserNotFound               = errors.New("UserNotFound")
-	ErrUserNotInGroup = errors.New("UserNotInGroup")
+	ErrUserNotInGroup             = errors.New("UserNotInGroup")
 )
