@@ -24,6 +24,7 @@ type GroupDataInterface interface {
 	GetById(id model.GroupID) (*model.Group, error)
 	GetByName(name string) (*model.Group, error)
 	GetByUser(id model.UserID) (*model.Group, error)
+	GetUsersOfGroup(id model.GroupID) (*[]model.User, error)
 
 	GetList(page int, limit int) (*[]model.Group, error)
 	GetListAll() (*[]model.Group, error)
