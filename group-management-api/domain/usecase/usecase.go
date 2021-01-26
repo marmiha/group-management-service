@@ -27,8 +27,9 @@ type ManageGroupUseCaseInterface interface {
 	ModifyGroup(id model.GroupID, p payload.ModifyGroupPayload) (*model.Group, error)
 
 	// User management inside groups.
-	RemoveUserFromGroup(user *model.User) error
-	AddUserToGroup(user *model.User, groupID model.GroupID) error
+	LeaveGroup(user *model.User) error
+	AssignUserToGroup(group payload.AssignUserToGroup) (*model.Group, error)
+	GetGroupOfUser(id model.UserID) (*model.Group, error)
 }
 
 // User listing business logic.

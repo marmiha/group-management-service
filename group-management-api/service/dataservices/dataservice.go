@@ -25,10 +25,11 @@ type GroupDataInterface interface {
 	GetByName(name string) (*model.Group, error)
 	GetByUser(id model.UserID) (*model.Group, error)
 	GetUsersOfGroup(id model.GroupID) (*[]model.User, error)
+	GetGroupOfUser(id model.UserID) (*model.Group, error)
 
 	GetList(page int, limit int) (*[]model.Group, error)
 	GetListAll() (*[]model.Group, error)
 
-	AddUserToGroup(user UserDataInterface, groupID model.GroupID) (*model.Group, error)
-	RemoveUserFromGroup(user UserDataInterface)
+	AssignUserToGroup(user model.UserID, groupID model.GroupID) (*model.Group, error)
+	LeaveGroup(userID model.UserID) error
 }
