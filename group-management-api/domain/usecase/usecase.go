@@ -1,12 +1,9 @@
-// Interfaces related to our business logic. These should be implemented in business logic implementations based on
-// the function.
 package usecase
 
 import (
 	"group-management-api/domain/model"
 	"group-management-api/domain/payload"
 )
-// These interfaces will be implemented for business logic.
 
 // Registration business logic.
 type RegistrationUseCaseInterface interface {
