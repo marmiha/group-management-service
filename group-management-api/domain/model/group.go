@@ -11,5 +11,4 @@ type Group struct {
 
 func (g Group) Validate() error {
 	panic("implement me")
-
 }
