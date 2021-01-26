@@ -1,3 +1,5 @@
+// Interfaces related to our business logic. These should be implemented in business logic implementations based on
+// the function.
 package usecase
 
 import (
@@ -21,7 +23,7 @@ type ManageUserUseCaseInterface interface {
 	ModifyUserDetails(user *model.User) error
 }
 
-// Group manage business logic.
+// Group management business logic.
 type ManageGroupUseCaseInterface interface {
 	// Basic functionalities.
 	CreateGroup(p payload.CreateGroupPayload) (group *model.Group, err error)
