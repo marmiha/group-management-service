@@ -17,7 +17,13 @@ type UserRegistrationUseCaseInterface interface {
 
 // User management business logic.
 type ManageUserUseCaseInterface interface {
-	ModifyUserDetails(user *model.User) error
+	ModifyUserDetails(id model.UserID, p payload.ModifyUserPayload) (*model.User, error)
+}
+
+// User listing business logic.
+type ListUserUseCaseInterface interface {
+	Find(id model.UserID) (*model.User, error)
+	UsersList() (*[]model.User, error)
 }
 
 // Group management business logic.
@@ -30,12 +36,6 @@ type ManageGroupUseCaseInterface interface {
 	LeaveGroup(user *model.User) error
 	AssignUserToGroup(group payload.AssignUserToGroup) (*model.Group, error)
 	GetGroupOfUser(id model.UserID) (*model.Group, error)
-}
-
-// User listing business logic.
-type ListUserUseCaseInterface interface {
-	Find(id model.UserID) (*model.User, error)
-	UsersList() (*[]model.User, error)
 }
 
 // Group listing business logic.
