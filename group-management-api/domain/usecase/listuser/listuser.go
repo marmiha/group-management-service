@@ -3,14 +3,14 @@ package listuser
 import (
 	"group-management-api/domain/model"
 	"group-management-api/domain/usecase"
-	"group-management-api/service/dataservices"
+	"group-management-api/service/dataservice"
 )
 
 // ListUserUseCaseInterface compile time implementation check.
 var _ usecase.ListUserUseCaseInterface = ListUserUseCase{}
 
 type ListUserUseCase struct {
-	UserData dataservices.UserDataInterface
+	UserData dataservice.UserDataInterface
 }
 
 func (lu ListUserUseCase) Find(id model.UserID) (*model.User, error) {

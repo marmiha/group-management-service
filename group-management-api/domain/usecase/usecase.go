@@ -11,8 +11,8 @@ type UserRegistrationUseCaseInterface interface {
 	RegisterUser(p payload.RegisterUserPayload) (*model.User, error)
 	UnregisterUser(p payload.UnregisterUserPayload) error
 	// PasswordHash and access related functions.
-	ChangePassword(p payload.ChangePasswordPayload) error
-	ValidateUserCredentials(p payload.CredentialsUserPayload) error
+	ChangePassword(user *model.User, p payload.ChangePasswordPayload) error
+	ValidateUserCredentials(p payload.CredentialsUserPayload) (bool, error)
 }
 
 // User management business logic.

@@ -21,11 +21,11 @@ func (ur UserRegistrationUseCase) UnregisterUser(p payload.UnregisterUserPayload
 	panic("implement me")
 }
 
-func (ur UserRegistrationUseCase) ChangePassword(p payload.ChangePasswordPayload) error {
+func (ur UserRegistrationUseCase) ChangePassword(user *model.User, p payload.ChangePasswordPayload) error {
 	panic("implement me")
 }
 
-func (ur UserRegistrationUseCase) ValidateUserCredentials(p payload.CredentialsUserPayload) error {
+func (ur UserRegistrationUseCase) ValidateUserCredentials(p payload.CredentialsUserPayload) (bool, error) {
 	panic("implement me")
 }
 

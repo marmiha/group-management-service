@@ -3,14 +3,14 @@ package listgroup
 import (
 	"group-management-api/domain/model"
 	"group-management-api/domain/usecase"
-	"group-management-api/service/dataservices"
+	"group-management-api/service/dataservice"
 )
 
 // ListGroupUseCaseInterface compile time implementation check.
 var _ usecase.ListGroupUseCaseInterface = ListGroupUseCase{}
 
 type ListGroupUseCase struct {
-	GroupData dataservices.GroupDataInterface
+	GroupData dataservice.GroupDataInterface
 }
 
 func (lg ListGroupUseCase) Find(id model.GroupID) (*model.Group, error) {

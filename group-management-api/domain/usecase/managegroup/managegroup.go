@@ -5,14 +5,14 @@ import (
 	"group-management-api/domain/model"
 	"group-management-api/domain/payload"
 	"group-management-api/domain/usecase"
-	"group-management-api/service/dataservices"
+	"group-management-api/service/dataservice"
 )
 
 // ManageGroupUseCaseInterface compile time implementation check.
 var _ usecase.ManageGroupUseCaseInterface = ManageGroupUseCase{}
 
 type ManageGroupUseCase struct {
-	GroupData dataservices.GroupDataInterface
+	GroupData dataservice.GroupDataInterface
 }
 
 func (mg ManageGroupUseCase) CreateGroup(p payload.CreateGroupPayload) (*model.Group, error) {
@@ -28,7 +28,7 @@ func (mg ManageGroupUseCase) CreateGroup(p payload.CreateGroupPayload) (*model.G
 
 	// Duplicate check
 	_, err = mg.GroupData.GetByName(group.Name)
-	if !errors.Is(err, dataservices.ErrNotFound) {
+	if !errors.Is(err, dataservice.ErrNotFound) {
 		return nil, err
 	}
 
@@ -89,7 +89,7 @@ func (mg ManageGroupUseCase) AssignUserToGroup(p payload.AssignUserToGroup) (*mo
 
 	// Check if user already has a group assigned.
 	group, err := mg.GroupData.GetGroupOfUser(p.UserID)
-	if !errors.Is(err, dataservices.ErrNotFound) {
+	if !errors.Is(err, dataservice.ErrNotFound) {
 		return nil, err
 	}
 

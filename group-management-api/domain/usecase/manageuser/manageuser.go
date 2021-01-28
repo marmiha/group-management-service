@@ -5,14 +5,14 @@ import (
 	"group-management-api/domain/model"
 	"group-management-api/domain/payload"
 	"group-management-api/domain/usecase"
-	"group-management-api/service/dataservices"
+	"group-management-api/service/dataservice"
 )
 
 // ManageUserUseCaseInterface compile time implementation check.
 var _ usecase.ManageUserUseCaseInterface = ManageUserUseCase{}
 
 type ManageUserUseCase struct {
-	UserData dataservices.UserDataInterface
+	UserData dataservice.UserDataInterface
 }
 
 func (mu ManageUserUseCase) ModifyUserDetails(id model.UserID, p payload.ModifyUserPayload) (*model.User, error) {
@@ -32,7 +32,7 @@ func (mu ManageUserUseCase) ModifyUserDetails(id model.UserID, p payload.ModifyU
 	if p.Email != "" {
 		// Check if email is already taken.
 		_, err := mu.UserData.GetByEmail(p.Email)
-		if !errors.Is(err, dataservices.ErrNotFound) {
+		if !errors.Is(err, dataservice.ErrNotFound) {
 			return nil, err
 		}
 

@@ -13,6 +13,6 @@ type Group struct {
 
 func (g Group) Validate() error {
 	return validation.ValidateStruct(&g,
-		validation.Field(&g.Name, GroupNameRule...),
+		validation.Field(&g.Name, GroupNameRequiredRule...),
 	)
 }

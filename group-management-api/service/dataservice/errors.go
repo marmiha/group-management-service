@@ -1,4 +1,4 @@
-package dataservices
+package dataservice
 
 import "errors"
 
