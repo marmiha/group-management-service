@@ -1,5 +1,7 @@
 package model
 
+import validation "github.com/go-ozzo/ozzo-validation/v4"
+
 type GroupID EntityID
 type Group struct {
 	Entity
@@ -10,5 +12,7 @@ type Group struct {
 }
 
 func (g Group) Validate() error {
-	panic("implement me")
+	return validation.ValidateStruct(&g,
+		validation.Field(&g.Name, GroupNameRule...),
+	)
 }

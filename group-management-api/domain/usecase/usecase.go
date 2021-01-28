@@ -10,7 +10,7 @@ type UserRegistrationUseCaseInterface interface {
 	// Registration related functions.
 	RegisterUser(p payload.RegisterUserPayload) (*model.User, error)
 	UnregisterUser(p payload.UnregisterUserPayload) error
-	// Password and access related functions.
+	// PasswordHash and access related functions.
 	ChangePassword(p payload.ChangePasswordPayload) error
 	ValidateUserCredentials(p payload.CredentialsUserPayload) error
 }
