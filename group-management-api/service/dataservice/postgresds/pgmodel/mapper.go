@@ -15,7 +15,7 @@ func UserPgToUserModel(upg *User, um *model.User) {
 	um.PasswordHash = upg.PasswordHash
 
 	// Group conversion.
-	var gm *model.Group
+	gm := new(model.Group)
 	GroupPgToGroupModel(&upg.Group, gm)
 	um.Group = *gm
 }
@@ -32,7 +32,7 @@ func GroupPgToGroupModel(gpg *Group, gm *model.Group) {
 
 	// Users conversion.
 	for _, upg := range gpg.Members {
-		var um *model.User
+		um := new(model.User)
 		UserPgToUserModel(upg, um)
 		gm.Members = append(gm.Members, um)
 	}
@@ -51,7 +51,7 @@ func UserModelToUserPg(um *model.User, upg *User) {
 	upg.PasswordHash = um.PasswordHash
 
 	// Group conversion.
-	var gm *Group
+	gm := new(Group)
 	GroupModelToGroupPg(&um.Group, gm)
 	upg.Group = *gm
 }
@@ -68,7 +68,7 @@ func GroupModelToGroupPg(gm *model.Group, gpg *Group) {
 
 	// Users conversion.
 	for _, um := range gm.Members {
-		var upg *User
+		upg := new(User)
 		UserModelToUserPg(um, upg)
 		gpg.Members = append(gpg.Members, upg)
 	}

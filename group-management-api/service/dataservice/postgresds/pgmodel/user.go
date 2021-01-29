@@ -15,7 +15,7 @@ type User struct {
 }
 
 func MapUser(um *model.User) *User {
-	var upg *User
+	upg := new(User)
 	upg.MapFrom(um)
 	return upg
 }

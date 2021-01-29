@@ -13,7 +13,7 @@ type Group struct {
 }
 
 func MapGroup(gm *model.Group) *Group {
-	var gpg *Group
+	gpg := new(Group)
 	GroupPgToGroupModel(gpg, gm)
 	return gpg
 }
