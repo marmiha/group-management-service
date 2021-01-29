@@ -2,6 +2,7 @@ package pgmodel
 
 import "group-management-api/domain/model"
 
+// Map User to model.User.
 func UserPgToUserModel(upg *User, um *model.User) {
 	// Entity struct fields
 	um.UpdatedAt = upg.UpdatedAt
@@ -19,6 +20,7 @@ func UserPgToUserModel(upg *User, um *model.User) {
 	um.Group = *gm
 }
 
+// Map Group to model.Group.
 func GroupPgToGroupModel(gpg *Group, gm *model.Group) {
 	// Entity struct fields
 	gm.UpdatedAt = gpg.UpdatedAt
@@ -36,6 +38,7 @@ func GroupPgToGroupModel(gpg *Group, gm *model.Group) {
 	}
 }
 
+// Map model.User to User.
 func UserModelToUserPg(um *model.User, upg *User) {
 	// Entity struct fields
 	upg.UpdatedAt = um.UpdatedAt
@@ -53,6 +56,7 @@ func UserModelToUserPg(um *model.User, upg *User) {
 	upg.Group = *gm
 }
 
+// Map model.Group to Group.
 func GroupModelToGroupPg(gm *model.Group, gpg *Group) {
 	// Entity struct fields
 	gpg.UpdatedAt = gm.UpdatedAt
