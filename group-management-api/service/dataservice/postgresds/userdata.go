@@ -22,7 +22,7 @@ func (u UserData) Delete(id model.UserID) error {
 }
 
 func (u UserData) GetById(id model.UserID) (*model.User, error) {
-	panic("implement me")
+
 }
 
 func (u UserData) GetByEmail(email string) (*model.User, error) {
