@@ -6,9 +6,9 @@ type GroupID EntityID
 type Group struct {
 	Entity
 
-	ID    GroupID `json:"id"`
-	Name  string  `json:"name"`
-	Users []User  `json:"users"`
+	ID      GroupID `json:"id"`
+	Name    string  `json:"name"`
+	Members []*User  `json:"users"`
 }
 
 func (g Group) Validate() error {
