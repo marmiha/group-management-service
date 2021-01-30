@@ -70,7 +70,7 @@ func ModelToGroup(gm *model.Group, gpg *Group) {
 	for _, um := range gm.Members {
 		upg := new(User)
 		ModelToUser(um, upg)
-		gpg.Members = append(gpg.Members, upg)
+		gpg.Members = append(gpg.Members, *upg)
 	}
 }
 
