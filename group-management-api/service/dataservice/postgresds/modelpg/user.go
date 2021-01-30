@@ -1,4 +1,4 @@
-package pgmodel
+package modelpg
 
 import "group-management-api/domain/model"
 
@@ -15,16 +15,16 @@ type User struct {
 }
 
 func (u User) MapTo(um *model.User) {
-	UserPgToUserModel(&u, um)
+	UserToModel(&u, um)
 }
 
 func (u User) MapFrom(um *model.User) {
-	UserModelToUserPg(um, &u)
+	ModelToUser(um, &u)
 }
 
 func (u User) ToModel() *model.User {
 	um := new(model.User)
-	UserPgToUserModel(&u, um)
+	UserToModel(&u, um)
 	return um
 }
 

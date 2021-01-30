@@ -1,4 +1,4 @@
-package pgmodel
+package modelpg
 
 import (
 	"context"

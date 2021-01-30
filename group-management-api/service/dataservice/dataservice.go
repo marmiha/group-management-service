@@ -13,7 +13,6 @@ type UserDataInterface interface {
 	GetByEmail(email string) (*model.User, error)
 
 	// TODO: Should return []*model.Group
-	GetList(page int, limit int) (*[]model.Group, error)
 	GetListAll() (*[]model.User, error)
 }
 
@@ -30,7 +29,6 @@ type GroupDataInterface interface {
 	GetGroupOfUser(id model.UserID) (*model.Group, error)
 
 	// TODO: Should return []*model.Group
-	GetList(page int, limit int) (*[]model.Group, error)
 	GetListAll() (*[]model.Group, error)
 
 	AssignUserToGroup(user model.UserID, groupID model.GroupID) (*model.Group, error)

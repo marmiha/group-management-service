@@ -1,9 +1,9 @@
-package pgmodel
+package modelpg
 
 import "group-management-api/domain/model"
 
 // Map User to model.User.
-func UserPgToUserModel(upg *User, um *model.User) {
+func UserToModel(upg *User, um *model.User) {
 	// Entity struct fields
 	um.UpdatedAt = upg.UpdatedAt
 	um.CreatedAt = upg.CreatedAt
@@ -16,12 +16,12 @@ func UserPgToUserModel(upg *User, um *model.User) {
 
 	// Group conversion.
 	gm := new(model.Group)
-	GroupPgToGroupModel(&upg.Group, gm)
+	GroupToModel(&upg.Group, gm)
 	um.Group = *gm
 }
 
 // Map Group to model.Group.
-func GroupPgToGroupModel(gpg *Group, gm *model.Group) {
+func GroupToModel(gpg *Group, gm *model.Group) {
 	// Entity struct fields
 	gm.UpdatedAt = gpg.UpdatedAt
 	gm.CreatedAt = gpg.CreatedAt
@@ -33,13 +33,13 @@ func GroupPgToGroupModel(gpg *Group, gm *model.Group) {
 	// Users conversion.
 	for _, upg := range gpg.Members {
 		um := new(model.User)
-		UserPgToUserModel(upg, um)
+		UserToModel(upg, um)
 		gm.Members = append(gm.Members, um)
 	}
 }
 
 // Map model.User to User.
-func UserModelToUserPg(um *model.User, upg *User) {
+func ModelToUser(um *model.User, upg *User) {
 	// Entity struct fields
 	upg.UpdatedAt = um.UpdatedAt
 	upg.CreatedAt = um.CreatedAt
@@ -52,12 +52,12 @@ func UserModelToUserPg(um *model.User, upg *User) {
 
 	// Group conversion.
 	gm := new(Group)
-	GroupModelToGroupPg(&um.Group, gm)
+	ModelToGroup(&um.Group, gm)
 	upg.Group = *gm
 }
 
 // Map model.Group to Group.
-func GroupModelToGroupPg(gm *model.Group, gpg *Group) {
+func ModelToGroup(gm *model.Group, gpg *Group) {
 	// Entity struct fields
 	gpg.UpdatedAt = gm.UpdatedAt
 	gpg.CreatedAt = gm.CreatedAt
@@ -69,8 +69,29 @@ func GroupModelToGroupPg(gm *model.Group, gpg *Group) {
 	// Users conversion.
 	for _, um := range gm.Members {
 		upg := new(User)
-		UserModelToUserPg(um, upg)
+		ModelToUser(um, upg)
 		gpg.Members = append(gpg.Members, upg)
 	}
 }
 
+// Map *[]Group to *[]model.Group
+func GroupsToModels(gpgs *[]Group) *[]model.Group{
+	gms := new([]model.Group)
+	for _, gpg := range *gpgs {
+		gm := new(model.Group)
+		GroupToModel(&gpg, gm)
+		*gms = append(*gms, *gm)
+	}
+	return gms
+}
+
+// Map *[]User to *[]model.User
+func UsersToModels(upgs *[]User) *[]model.User{
+	ums := new([]model.User)
+	for _, upg := range *upgs {
+		um := new(model.User)
+		UserToModel(&upg, um)
+		*ums = append(*ums, *um)
+	}
+	return ums
+}

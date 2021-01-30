@@ -5,7 +5,7 @@ import (
 	"github.com/go-pg/pg/v10"
 	"group-management-api/domain/model"
 	"group-management-api/service/dataservice"
-	"group-management-api/service/dataservice/postgresds/pgmodel"
+	"group-management-api/service/dataservice/postgresds/modelpg"
 )
 
 // Implementation compile time check.
@@ -16,7 +16,7 @@ type UserData struct {
 }
 
 func (ud UserData) Create(user *model.User) error {
-	userPg := pgmodel.NewUserFrom(user)
+	userPg := modelpg.NewUserFrom(user)
 
 	_, err := ud.Model(userPg).Insert()
 	if err != nil {
@@ -28,37 +28,56 @@ func (ud UserData) Create(user *model.User) error {
 }
 
 func (ud UserData) Modify(user *model.User) error {
-	panic("implement me")
+	userPg := modelpg.NewUserFrom(user)
+
+	_, err := ud.Model(userPg).
+		WherePK().
+		UpdateNotZero()
+
+	if err != nil {
+		return err
+	}
+
+	userPg.MapTo(user)
+	return nil
 }
 
 func (ud UserData) Delete(id model.UserID) error {
-	panic("implement me")
+	userPg := modelpg.NewUser(id)
+
+	_, err := ud.Model(userPg).
+		WherePK().
+		Delete()
+
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (ud UserData) GetById(id model.UserID) (*model.User, error) {
-	user := pgmodel.NewUser(id)
+	userPg := modelpg.NewUser(id)
 
-	err := ud.Model(user).
+	err := ud.Model(userPg).
 		Relation("Group").
 		WherePK().
 		Select()
 
 	if err != nil {
-		// Pass our custom error which domain handles differently.
 		if errors.Is(err, pg.ErrNoRows) {
 			return nil, dataservice.ErrNotFound
 		}
-		// TODO: Error logging?
 		return nil, err
 	}
 
-	return user.ToModel(), nil
+	return userPg.ToModel(), nil
 }
 
 func (ud UserData) GetByEmail(email string) (*model.User, error) {
-	user := new(pgmodel.User)
+	userPg := new(modelpg.User)
 
-	err := ud.Model(user).
+	err := ud.Model(userPg).
 		Relation("Group").
 		Where("email = ?", email).
 		Select()
@@ -67,19 +86,21 @@ func (ud UserData) GetByEmail(email string) (*model.User, error) {
 		if errors.Is(err, pg.ErrNoRows) {
 			return nil, dataservice.ErrNotFound
 		}
-		// TODO: Error logging?
 		return nil, err
 	}
 
-	return user.ToModel(), nil
-}
-
-func (ud UserData) GetList(page int, limit int) (*[]model.Group, error) {
-	panic("implement me")
+	return userPg.ToModel(), nil
 }
 
 func (ud UserData) GetListAll() (*[]model.User, error) {
-	panic("implement me")
+	var usersPg *[]modelpg.User
+
+	err := ud.Model(usersPg).Select()
+	if err != nil {
+		return nil, err
+	}
+
+	return modelpg.UsersToModels(usersPg), nil
 }
 
 

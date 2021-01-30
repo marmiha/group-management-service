@@ -3,9 +3,11 @@ package postgresds
 import (
 	"errors"
 	"github.com/go-pg/pg/v10"
+	"github.com/go-pg/pg/v10/orm"
+	"group-management-api/domain"
 	"group-management-api/domain/model"
 	"group-management-api/service/dataservice"
-	"group-management-api/service/dataservice/postgresds/pgmodel"
+	"group-management-api/service/dataservice/postgresds/modelpg"
 )
 
 // Implementation compile time check.
@@ -16,7 +18,7 @@ type GroupData struct {
 }
 
 func (gd GroupData) Create(group *model.Group) error {
-	groupPg := pgmodel.NewGroupFrom(group)
+	groupPg := modelpg.NewGroupFrom(group)
 
 	_, err := gd.Model(groupPg).Insert()
 	if err != nil {
@@ -28,17 +30,37 @@ func (gd GroupData) Create(group *model.Group) error {
 }
 
 func (gd GroupData) Modify(group *model.Group) error {
-	panic("implement me")
+	groupPg := modelpg.NewGroupFrom(group)
+
+	_, err := gd.Model(groupPg).
+		WherePK().
+		UpdateNotZero()
+
+	if err != nil {
+		return err
+	}
+
+	groupPg.MapTo(group)
+	return nil
 }
 
 func (gd GroupData) Delete(id model.GroupID) error {
-	panic("implement me")
+	groupPg := modelpg.NewGroup(id)
+
+	_, err := gd.Model(groupPg).
+		WherePK().
+		Delete()
+
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func (gd GroupData) GetById(id model.GroupID) (*model.Group, error) {
-	group := pgmodel.NewGroup(id)
+	groupPg := modelpg.NewGroup(id)
 
-	err := gd.Model(group).
+	err := gd.Model(groupPg).
 		WherePK().
 		Select()
 
@@ -47,17 +69,16 @@ func (gd GroupData) GetById(id model.GroupID) (*model.Group, error) {
 		if errors.Is(err, pg.ErrNoRows) {
 			return nil, dataservice.ErrNotFound
 		}
-		// TODO: Error logging?
 		return nil, err
 	}
 
-	return group.ToModel(), nil
+	return groupPg.ToModel(), nil
 }
 
 func (gd GroupData) GetByName(name string) (*model.Group, error) {
-	group := new(pgmodel.Group)
+	groupPg := new(modelpg.Group)
 
-	err := gd.Model(group).
+	err := gd.Model(groupPg).
 		Where("name = ?", name).
 		Select()
 
@@ -65,31 +86,76 @@ func (gd GroupData) GetByName(name string) (*model.Group, error) {
 		if errors.Is(err, pg.ErrNoRows) {
 			return nil, dataservice.ErrNotFound
 		}
-		// TODO: Error logging?
 		return nil, err
 	}
 
-	return group.ToModel(), nil
+	return groupPg.ToModel(), nil
 }
 
 func (gd GroupData) GetByUser(id model.UserID) (*model.Group, error) {
-	panic("implement me")
+	groupPg := new(modelpg.Group)
+
+	err := gd.Model(groupPg).
+		Relation("Members", func(query *orm.Query) (*orm.Query, error) {
+			return query.Where("id = ?", id), nil
+		}).
+		First()
+
+	if err != nil {
+		if errors.Is(err, pg.ErrNoRows) {
+			return nil, domain.ErrNoResult
+		}
+		return nil, err
+	}
+
+	return groupPg.ToModel(), nil
 }
 
 func (gd GroupData) GetUsersOfGroup(id model.GroupID) (*[]model.User, error) {
-	panic("implement me")
+	groupPg := modelpg.NewGroup(id)
+
+	err := gd.Model(groupPg).
+		WherePK().
+		Relation("Members").
+		Select()
+
+	if err != nil {
+		if errors.Is(err, pg.ErrNoRows) {
+			return nil, dataservice.ErrNotFound
+		}
+		return nil, err
+	}
+
+	return modelpg.UsersToModels(&groupPg.Members), nil
 }
 
 func (gd GroupData) GetGroupOfUser(id model.UserID) (*model.Group, error) {
-	panic("implement me")
-}
+	userPg := modelpg.NewUser(id)
 
-func (gd GroupData) GetList(page int, limit int) (*[]model.Group, error) {
-	panic("implement me")
+	err := gd.Model(userPg).
+		WherePK().
+		Relation("Members").
+		Select()
+
+	if err != nil {
+		if errors.Is(err, pg.ErrNoRows) {
+			return nil, dataservice.ErrNotFound
+		}
+		return nil, err
+	}
+
+	return userPg.Group.ToModel(), nil
 }
 
 func (gd GroupData) GetListAll() (*[]model.Group, error) {
-	panic("implement me")
+	groupsPg := new([]modelpg.Group)
+
+	err := gd.Model(groupsPg).Select()
+	if err != nil {
+		return nil, err
+	}
+
+	return modelpg.GroupsToModels(groupsPg), nil
 }
 
 func (gd GroupData) AssignUserToGroup(userID model.UserID, groupID model.GroupID) (*model.Group, error) {

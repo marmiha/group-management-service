@@ -3,7 +3,7 @@ package postgresds
 import (
 	"github.com/go-pg/pg/v10"
 	"github.com/go-pg/pg/v10/orm"
-	"group-management-api/service/dataservice/postgresds/pgmodel"
+	"group-management-api/service/dataservice/postgresds/modelpg"
 )
 
 func NewDatabaseConnection(opts *pg.Options) *pg.DB {
@@ -15,8 +15,8 @@ func NewDatabaseConnection(opts *pg.Options) *pg.DB {
 func CreateSchema(db *pg.DB, options *orm.CreateTableOptions) error {
 	// Our database models/structs.
 	models := []interface{} {
-		(*pgmodel.User)(nil),
-		(*pgmodel.Group)(nil),
+		(*modelpg.User)(nil),
+		(*modelpg.Group)(nil),
 		// More can be added if needed.
 	}
 

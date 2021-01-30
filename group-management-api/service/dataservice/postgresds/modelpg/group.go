@@ -1,4 +1,4 @@
-package pgmodel
+package modelpg
 
 import "group-management-api/domain/model"
 
@@ -9,26 +9,26 @@ type Group struct {
 
 	ID      GroupID `pg:"id,pk"`
 	Name    string  `pg:",unique"`
-	Members []*User `pg:"rel:has-many"`
+	Members []User `pg:"rel:has-many"`
 }
 
 func (g Group) MapTo(gm *model.Group) {
-	GroupPgToGroupModel(&g, gm)
+	GroupToModel(&g, gm)
 }
 
 func (g Group) MapFrom(gm *model.Group) {
-	GroupModelToGroupPg(gm, &g)
+	ModelToGroup(gm, &g)
 }
 
 func (g Group) ToModel() *model.Group {
 	gm := new(model.Group)
-	GroupPgToGroupModel(&g, gm)
+	GroupToModel(&g, gm)
 	return gm
 }
 
 func NewGroupFrom(gm *model.Group) *Group {
 	gpg := new(Group)
-	GroupPgToGroupModel(gpg, gm)
+	GroupToModel(gpg, gm)
 	return gpg
 }
 
