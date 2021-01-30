@@ -33,7 +33,7 @@ func GroupToModel(gpg *Group, gm *model.Group) {
 	// Users conversion.
 	for _, upg := range gpg.Members {
 		um := new(model.User)
-		UserToModel(upg, um)
+		UserToModel(&upg, um)
 		gm.Members = append(gm.Members, um)
 	}
 }
