@@ -21,7 +21,7 @@ func (lg ListGroupUseCase) Find(id model.GroupID) (*model.Group, error) {
 	return group, nil
 }
 
-func (lg ListGroupUseCase) GroupsList() (*[]model.Group, error) {
+func (lg ListGroupUseCase) GroupsList() ([]*model.Group, error) {
 	groups, err := lg.GroupData.GetListAll()
 	if err != nil {
 		return nil, err
@@ -29,7 +29,7 @@ func (lg ListGroupUseCase) GroupsList() (*[]model.Group, error) {
 	return groups, nil
 }
 
-func (lg ListGroupUseCase) ListUsersOfGroup(id model.GroupID) (*[]model.User, error) {
+func (lg ListGroupUseCase) ListUsersOfGroup(id model.GroupID) ([]*model.User, error) {
 	users, err := lg.GroupData.GetUsersOfGroup(id)
 	if err != nil {
 		return nil, err

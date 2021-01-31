@@ -2,6 +2,7 @@ package managegroup
 
 import (
 	"errors"
+	"group-management-api/domain"
 	"group-management-api/domain/model"
 	"group-management-api/domain/payload"
 	"group-management-api/domain/usecase"
@@ -89,9 +90,14 @@ func (mg ManageGroupUseCase) AssignUserToGroup(p payload.AssignUserToGroup) (*mo
 
 	// Check if user already has a group assigned.
 	group, err := mg.GroupData.GetGroupOfUser(p.UserID)
-	if !errors.Is(err, dataservice.ErrNotFound) {
+	if err != nil && !errors.Is(err, dataservice.ErrNotFound) {
 		return nil, err
 	}
+
+	if group != nil {
+		return nil , domain.ErrUserAlreadyInGroup
+	}
+
 
 	// Instruct datastore to assign user to group.
 	group, err = mg.GroupData.AssignUserToGroup(p.UserID, p.GroupID)

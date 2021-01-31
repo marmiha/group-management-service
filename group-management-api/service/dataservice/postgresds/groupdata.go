@@ -14,13 +14,16 @@ import (
 var _ dataservice.GroupDataInterface = GroupData{}
 
 type GroupData struct {
- 	*pg.DB
+	*pg.DB
 }
 
 func (gd GroupData) Create(group *model.Group) error {
 	groupPg := modelpg.NewGroupFrom(group)
 
-	_, err := gd.Model(groupPg).Insert()
+	_, err := gd.Model(groupPg).
+		Returning("*").
+		Insert()
+
 	if err != nil {
 		return err
 	}
@@ -34,6 +37,7 @@ func (gd GroupData) Modify(group *model.Group) error {
 
 	_, err := gd.Model(groupPg).
 		WherePK().
+		Returning("*").
 		UpdateNotZero()
 
 	if err != nil {
@@ -62,6 +66,7 @@ func (gd GroupData) GetById(id model.GroupID) (*model.Group, error) {
 
 	err := gd.Model(groupPg).
 		WherePK().
+		Returning("*").
 		Select()
 
 	if err != nil {
@@ -80,6 +85,7 @@ func (gd GroupData) GetByName(name string) (*model.Group, error) {
 
 	err := gd.Model(groupPg).
 		Where("name = ?", name).
+		Returning("*").
 		Select()
 
 	if err != nil {
@@ -99,6 +105,7 @@ func (gd GroupData) GetByUser(id model.UserID) (*model.Group, error) {
 		Relation("Members", func(query *orm.Query) (*orm.Query, error) {
 			return query.Where("id = ?", id), nil
 		}).
+		Returning("*").
 		First()
 
 	if err != nil {
@@ -111,12 +118,13 @@ func (gd GroupData) GetByUser(id model.UserID) (*model.Group, error) {
 	return groupPg.ToModel(), nil
 }
 
-func (gd GroupData) GetUsersOfGroup(id model.GroupID) (*[]model.User, error) {
+func (gd GroupData) GetUsersOfGroup(id model.GroupID) ([]*model.User, error) {
 	groupPg := modelpg.NewGroup(id)
 
 	err := gd.Model(groupPg).
 		WherePK().
 		Relation("Members").
+		Returning("*").
 		Select()
 
 	if err != nil {
@@ -134,7 +142,8 @@ func (gd GroupData) GetGroupOfUser(id model.UserID) (*model.Group, error) {
 
 	err := gd.Model(userPg).
 		WherePK().
-		Relation("Members").
+		Relation("Group").
+		Returning("*").
 		Select()
 
 	if err != nil {
@@ -147,10 +156,13 @@ func (gd GroupData) GetGroupOfUser(id model.UserID) (*model.Group, error) {
 	return userPg.Group.ToModel(), nil
 }
 
-func (gd GroupData) GetListAll() (*[]model.Group, error) {
-	groupsPg := new([]modelpg.Group)
+func (gd GroupData) GetListAll() ([]*model.Group, error) {
+	groupsPg := new([]*modelpg.Group)
 
-	err := gd.Model(groupsPg).Select()
+	err := gd.Model(groupsPg).
+		Returning("*").
+		Select()
+
 	if err != nil {
 		return nil, err
 	}
@@ -159,10 +171,34 @@ func (gd GroupData) GetListAll() (*[]model.Group, error) {
 }
 
 func (gd GroupData) AssignUserToGroup(userID model.UserID, groupID model.GroupID) (*model.Group, error) {
-	panic("implement me")
+	userPg := modelpg.NewUser(userID)
+	userPg.GroupID = modelpg.GroupID(groupID)
+
+	_, err := gd.Model(userPg).
+		WherePK().
+		Relation("Group").
+		Returning("*").
+		UpdateNotZero(userPg)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return userPg.Group.ToModel(), nil
 }
 
 func (gd GroupData) LeaveGroup(userID model.UserID) error {
-	panic("implement me")
-}
+	userPg := modelpg.NewUser(userID)
 
+	_, err := gd.Model(userPg).
+		WherePK().
+		Set("group_id = NULL").
+		Returning("*").
+		Update()
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

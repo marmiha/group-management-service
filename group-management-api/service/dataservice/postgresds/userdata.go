@@ -18,7 +18,10 @@ type UserData struct {
 func (ud UserData) Create(user *model.User) error {
 	userPg := modelpg.NewUserFrom(user)
 
-	_, err := ud.Model(userPg).Insert()
+	_, err := ud.Model(userPg).
+		Returning("*").
+		Insert()
+
 	if err != nil {
 		return err
 	}
@@ -32,6 +35,7 @@ func (ud UserData) Modify(user *model.User) error {
 
 	_, err := ud.Model(userPg).
 		WherePK().
+		Returning("*").
 		UpdateNotZero()
 
 	if err != nil {
@@ -47,6 +51,7 @@ func (ud UserData) Delete(id model.UserID) error {
 
 	_, err := ud.Model(userPg).
 		WherePK().
+		Returning("*").
 		Delete()
 
 	if err != nil {
@@ -62,6 +67,7 @@ func (ud UserData) GetById(id model.UserID) (*model.User, error) {
 	err := ud.Model(userPg).
 		Relation("Group").
 		WherePK().
+		Returning("*").
 		Select()
 
 	if err != nil {
@@ -80,6 +86,7 @@ func (ud UserData) GetByEmail(email string) (*model.User, error) {
 	err := ud.Model(userPg).
 		Relation("Group").
 		Where("email = ?", email).
+		Returning("*").
 		Select()
 
 	if err != nil {
@@ -92,8 +99,8 @@ func (ud UserData) GetByEmail(email string) (*model.User, error) {
 	return userPg.ToModel(), nil
 }
 
-func (ud UserData) GetListAll() (*[]model.User, error) {
-	var usersPg *[]modelpg.User
+func (ud UserData) GetListAll() ([]*model.User, error) {
+	usersPg := new([]*modelpg.User)
 
 	err := ud.Model(usersPg).Select()
 	if err != nil {

@@ -33,7 +33,7 @@ func GroupToModel(gpg *Group, gm *model.Group) {
 	// Users conversion.
 	for _, upg := range gpg.Members {
 		um := new(model.User)
-		UserToModel(&upg, um)
+		UserToModel(upg, um)
 		gm.Members = append(gm.Members, um)
 	}
 }
@@ -70,28 +70,28 @@ func ModelToGroup(gm *model.Group, gpg *Group) {
 	for _, um := range gm.Members {
 		upg := new(User)
 		ModelToUser(um, upg)
-		gpg.Members = append(gpg.Members, *upg)
+		gpg.Members = append(gpg.Members, upg)
 	}
 }
 
 // Map *[]Group to *[]model.Group
-func GroupsToModels(gpgs *[]Group) *[]model.Group{
-	gms := new([]model.Group)
+func GroupsToModels(gpgs *[]*Group) []*model.Group{
+	gms := new([]*model.Group)
 	for _, gpg := range *gpgs {
 		gm := new(model.Group)
-		GroupToModel(&gpg, gm)
-		*gms = append(*gms, *gm)
+		GroupToModel(gpg, gm)
+		*gms = append(*gms, gm)
 	}
-	return gms
+	return *gms
 }
 
 // Map *[]User to *[]model.User
-func UsersToModels(upgs *[]User) *[]model.User{
-	ums := new([]model.User)
+func UsersToModels(upgs *[]*User) []*model.User{
+	ums := new([]*model.User)
 	for _, upg := range *upgs {
 		um := new(model.User)
-		UserToModel(&upg, um)
-		*ums = append(*ums, *um)
+		UserToModel(upg, um)
+		*ums = append(*ums, um)
 	}
-	return ums
+	return *ums
 }

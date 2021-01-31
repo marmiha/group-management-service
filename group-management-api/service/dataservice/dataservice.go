@@ -12,8 +12,7 @@ type UserDataInterface interface {
 	GetById(id model.UserID) (*model.User, error)
 	GetByEmail(email string) (*model.User, error)
 
-	// TODO: Should return []*model.Group
-	GetListAll() (*[]model.User, error)
+	GetListAll() ([]*model.User, error)
 }
 
 type GroupDataInterface interface {
@@ -24,12 +23,10 @@ type GroupDataInterface interface {
 	GetById(id model.GroupID) (*model.Group, error)
 	GetByName(name string) (*model.Group, error)
 	GetByUser(id model.UserID) (*model.Group, error)
-	// TODO: Should return []*model.User
-	GetUsersOfGroup(id model.GroupID) (*[]model.User, error)
+	GetUsersOfGroup(id model.GroupID) ([]*model.User, error)
 	GetGroupOfUser(id model.UserID) (*model.Group, error)
 
-	// TODO: Should return []*model.Group
-	GetListAll() (*[]model.Group, error)
+	GetListAll() ([]*model.Group, error)
 
 	AssignUserToGroup(user model.UserID, groupID model.GroupID) (*model.Group, error)
 	LeaveGroup(userID model.UserID) error

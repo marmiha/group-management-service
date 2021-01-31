@@ -8,8 +8,8 @@ import (
 // Business logic errors.
 var (
 	ErrUserWithEmailAlreadyExists = errors.New("UserWithEmailAlreadyExists")
-	ErrNoResult                   = errors.New("NoResult")
 	ErrInvalidLoginCredentials    = errors.New("InvalidLoginCredentials")
-	ErrUserNotFound               = errors.New("UserNotFound")
-	ErrUserNotInGroup             = errors.New("UserNotInGroup")
+
+	ErrNoResult                   = errors.New("NoResult")
+	ErrUserAlreadyInGroup         = errors.New("UserAlreadyInGroup")
 )

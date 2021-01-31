@@ -21,7 +21,7 @@ func (lu ListUserUseCase) Find(id model.UserID) (*model.User, error) {
 	return user, nil
 }
 
-func (lu ListUserUseCase) UsersList() (*[]model.User, error) {
+func (lu ListUserUseCase) UsersList() ([]*model.User, error) {
 	users, err := lu.UserData.GetListAll()
 	if err != nil {
 		return nil, err

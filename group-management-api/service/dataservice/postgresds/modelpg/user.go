@@ -4,14 +4,16 @@ import "group-management-api/domain/model"
 
 type UserID EntityID
 type User struct {
-	tableName struct{} `pg:"\"users\",alias:u"`
+	tableName struct{} `pg:"\"usr\",alias:u"`
 	Entity
 
 	ID           UserID `pg:"id,pk"`
 	Email        string `pg:",unique"`
 	Name         string
 	PasswordHash string
-	Group        Group `pg:"rel:has-one"`
+
+	GroupID GroupID
+	Group   Group `pg:"rel:has-one"`
 }
 
 func (u User) MapTo(um *model.User) {

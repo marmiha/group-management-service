@@ -23,7 +23,7 @@ type ManageUserUseCaseInterface interface {
 // User listing business logic.
 type ListUserUseCaseInterface interface {
 	Find(id model.UserID) (*model.User, error)
-	UsersList() (*[]model.User, error)
+	UsersList() ([]*model.User, error)
 }
 
 // Group management business logic.
@@ -41,7 +41,7 @@ type ManageGroupUseCaseInterface interface {
 // Group listing business logic.
 type ListGroupUseCaseInterface interface {
 	Find(id model.GroupID) (*model.Group, error)
-	GroupsList() (*[]model.Group, error)
+	GroupsList() ([]*model.Group, error)
 
-	ListUsersOfGroup(id model.GroupID) (*[]model.User, error)
+	ListUsersOfGroup(id model.GroupID) ([]*model.User, error)
 }

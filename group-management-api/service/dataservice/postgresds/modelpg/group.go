@@ -4,12 +4,13 @@ import "group-management-api/domain/model"
 
 type GroupID EntityID
 type Group struct {
-	tableName struct{} `pg:"\"group\",alias:g"`
+	tableName struct{} `pg:"\"grp\",alias:g"`
 	Entity
 
 	ID      GroupID `pg:"id,pk"`
 	Name    string  `pg:",unique"`
-	Members []User `pg:"rel:has-many"`
+
+	Members []*User `pg:"rel:has-many,join_fk:group_id"`
 }
 
 func (g Group) MapTo(gm *model.Group) {
