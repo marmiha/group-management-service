@@ -7,8 +7,6 @@ import "group-management-api/domain/model"
 type AuthServiceInterface interface {
 	// Access token generation.
 	GenerateAccessToken(user *model.User) (string, error)
-	// Password validity checker.
-	CheckPassword(user *model.User, password string) error
-	// New password setting.
-	SetPassword(user *model.User, password string) error
+	// Parse token from request.
+	ParseToken()
 }

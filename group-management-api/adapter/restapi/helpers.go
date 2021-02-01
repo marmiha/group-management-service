@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
+	"group-management-api/domain/model"
 	"net/http"
 )
 
@@ -35,6 +36,13 @@ func validatePayload(next http.HandlerFunc, payload validation.Validatable) http
 	}
 }
 
+func notFoundResponse(writer http.ResponseWriter, error error) {
+	response := map[string]string {
+		"error": error.Error(),
+	}
+	jsonResponse(writer, response, http.StatusNotFound)
+}
+
 func createdResponse(writer http.ResponseWriter, responseData interface{}) {
 	jsonResponse(writer, responseData, http.StatusCreated)
 }
@@ -49,6 +57,14 @@ func badRequestResponse(writer http.ResponseWriter, error error) {
 	}
 	jsonResponse(writer, response, http.StatusBadRequest)
 }
+
+func unauthorizedResponse(writer http.ResponseWriter, error error) {
+	response := map[string]string {
+		"error": error.Error(),
+	}
+	jsonResponse(writer, response, http.StatusUnauthorized)
+}
+
 
 func internalServerErrorResponse(writer http.ResponseWriter, error error) {
 	// Our response, what we reply back. Using the map[string]string we can define json properties and their values.
@@ -77,4 +93,12 @@ func jsonResponse(writer http.ResponseWriter, responseData interface{}, httpStat
 		return
 	}
 	return
+}
+
+func (s *Server) currentUserFromCtx(r *http.Request) *model.User {
+	return r.Context().Value(contextUserKey).(*model.User)
+}
+
+func (s *Server) todoFromContext(r *http.Request) *model.Group {
+	return r.Context().Value(contextGroupKey).(*model.Group)
 }

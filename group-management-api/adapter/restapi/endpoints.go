@@ -10,8 +10,8 @@ func (s *Server) setupEndpoints(r *chi.Mux) {
 			r.Get("/", s.getUsers)
 
 			// Route for logged in current user.
-			// TODO r.Use(s.WithAuthentication)
 			r.Route("/current", func(r chi.Router) {
+				r.Use(s.WithUserAuthenticationCtx)
 				// GET for getting current user.
 				// PATCH for updating user information.
 				// DELETE for unregistering.
@@ -35,12 +35,12 @@ func (s *Server) setupEndpoints(r *chi.Mux) {
 			// POST to create a group.
 			r.Post("/", s.createGroup)
 
-			r.Route("/{group_id}", func(r chi.Router) {
-				// TODO r.Use(s.WithGroup)
+			r.Route("/{"+groupIdParam+"}", func(r chi.Router) {
+				r.Use(s.GroupCtx)
 				// GET to fetch the group.
 				// DELETE to delete the group.
 				// PATCH to modify group name.
 			})
 		})
-	})
+	}
 }

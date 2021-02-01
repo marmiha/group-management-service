@@ -93,21 +93,21 @@ func (ur UserRegistrationUseCase) ChangePassword(userID model.UserID, p payload.
 	return user, nil
 }
 
-func (ur UserRegistrationUseCase) ValidateUserCredentials(p payload.CredentialsUserPayload) (bool, error) {
+func (ur UserRegistrationUseCase) ValidateUserCredentials(p payload.CredentialsUserPayload) (*model.User, error) {
 
 	user, err := ur.UserData.GetByEmail(p.Email)
 	if err != nil {
-		return false, domain.ErrInvalidLoginCredentials
+		return nil, domain.ErrInvalidLoginCredentials
 	}
 
 	// Check if password matches the hash.
 	err = checkPassword(user, p.Password)
 
 	if err != nil {
-		return false, domain.ErrInvalidLoginCredentials
+		return nil, domain.ErrInvalidLoginCredentials
 	}
 
-	return true, nil
+	return user, nil
 }
 
 func checkPassword(user *model.User, password string) error {

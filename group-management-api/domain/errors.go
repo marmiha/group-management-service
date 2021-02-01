@@ -15,4 +15,6 @@ var (
 	ErrUserAlreadyInGroup = errors.New("UserAlreadyInGroup")
 
 	ErrGroupWithNameAlreadyTaken = errors.New("GroupWithNameAlreadyTaken")
+
+	ErrUserNotFound = errors.New("UserNotFound")
 )

@@ -28,11 +28,7 @@ func (s *Server) createGroup(writer http.ResponseWriter, request *http.Request) 
 			return
 		}
 
-		response := map[string] interface{} {
-			"Group": group,
-		}
-
-		createdResponse(writer, response)
+		createdResponse(writer, group)
 	}, &p)
 
 	next.ServeHTTP(writer, request)
