@@ -22,7 +22,16 @@ func CreateSchema(db *pg.DB, options *orm.CreateTableOptions) error {
 
 	// Create table for each of these models.
 	for _, model := range models {
-		err := db.Model(model).CreateTable(options)
+		// Drop tables.
+		err := db.Model(model).DropTable(&orm.DropTableOptions{
+			IfExists: true,
+			Cascade:  true,
+		})
+		if err != nil {
+			return err
+		}
+		// Make Tables.
+		err = db.Model(model).CreateTable(options)
 		if err != nil {
 			return err
 		}

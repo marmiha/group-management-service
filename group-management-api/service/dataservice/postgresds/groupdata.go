@@ -157,7 +157,7 @@ func (gd GroupData) GetGroupOfUser(id model.UserID) (*model.Group, error) {
 }
 
 func (gd GroupData) GetListAll() ([]*model.Group, error) {
-	groupsPg := new([]*modelpg.Group)
+	groupsPg := &[]*modelpg.Group{}
 
 	err := gd.Model(groupsPg).
 		Returning("*").

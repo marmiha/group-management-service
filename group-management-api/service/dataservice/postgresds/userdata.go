@@ -100,7 +100,7 @@ func (ud UserData) GetByEmail(email string) (*model.User, error) {
 }
 
 func (ud UserData) GetListAll() ([]*model.User, error) {
-	usersPg := new([]*modelpg.User)
+	usersPg := &[]*modelpg.User{}
 
 	err := ud.Model(usersPg).Select()
 	if err != nil {

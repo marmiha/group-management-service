@@ -78,7 +78,7 @@ func ModelToGroup(gm *model.Group, gpg *Group) {
 
 // Map *[]Group to *[]model.Group
 func GroupsToModels(gpgs *[]*Group) []*model.Group{
-	gms := new([]*model.Group)
+	gms := &[]*model.Group{}
 	for _, gpg := range *gpgs {
 		gm := new(model.Group)
 		GroupToModel(gpg, gm)
@@ -89,7 +89,7 @@ func GroupsToModels(gpgs *[]*Group) []*model.Group{
 
 // Map *[]User to *[]model.User
 func UsersToModels(upgs *[]*User) []*model.User{
-	ums := new([]*model.User)
+	ums := &[]*model.User{}
 	for _, upg := range *upgs {
 		um := new(model.User)
 		UserToModel(upg, um)

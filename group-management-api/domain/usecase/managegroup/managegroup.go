@@ -19,6 +19,7 @@ type ManageGroupUseCase struct {
 func (mg ManageGroupUseCase) CreateGroup(p payload.CreateGroupPayload) (*model.Group, error) {
 	group := &model.Group{
 		Name: p.Name,
+		Members: []*model.User{},
 	}
 
 	// Validation check.

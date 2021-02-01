@@ -10,7 +10,7 @@ type User struct {
 	Email        string `json:"email"`
 	Name         string `json:"name"`
 	PasswordHash string `json:"-"`
-	Group        Group  `json:"group"`
+	Group        Group  `json:"group,omitempty"`
 }
 
 func (u User) Validate() error {
