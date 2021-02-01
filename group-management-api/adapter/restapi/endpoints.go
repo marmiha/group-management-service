@@ -64,5 +64,5 @@ func (s *Server) setupEndpoints(r *chi.Mux) {
 				r.Patch("/", s.modifyGroup)
 			})
 		})
-	}
+	})
 }
