@@ -2,7 +2,6 @@ package postgresds
 
 import (
 	"errors"
-	"fmt"
 	"github.com/go-pg/pg/v10"
 	"github.com/go-pg/pg/v10/orm"
 	"group-management-api/domain"
