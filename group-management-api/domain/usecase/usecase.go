@@ -9,9 +9,9 @@ import (
 type UserRegistrationUseCaseInterface interface {
 	// Registration related functions.
 	RegisterUser(p payload.RegisterUserPayload) (*model.User, error)
-	UnregisterUser(p payload.UnregisterUserPayload) error
+	UnregisterUser(userID model.UserID, p payload.UnregisterUserPayload) error
 	// PasswordHash and access related functions.
-	ChangePassword(user *model.User, p payload.ChangePasswordPayload) error
+	ChangePassword(userID model.UserID, p payload.ChangePasswordPayload) (*model.User, error)
 	ValidateUserCredentials(p payload.CredentialsUserPayload) (bool, error)
 }
 
