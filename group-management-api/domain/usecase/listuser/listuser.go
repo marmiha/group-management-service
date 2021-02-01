@@ -1,6 +1,8 @@
 package listuser
 
 import (
+	"errors"
+	"group-management-api/domain"
 	"group-management-api/domain/model"
 	"group-management-api/domain/usecase"
 	"group-management-api/service/dataservice"
@@ -16,6 +18,9 @@ type ListUserUseCase struct {
 func (lu ListUserUseCase) Find(id model.UserID) (*model.User, error) {
 	user, err := lu.UserData.GetById(id)
 	if err != nil {
+		if errors.Is(err, dataservice.ErrNotFound) {
+			return nil, domain.ErrNoResult
+		}
 		return nil ,err
 	}
 	return user, nil

@@ -80,6 +80,7 @@ func internalServerErrorResponse(writer http.ResponseWriter, error error) {
 	jsonResponse(writer, response, http.StatusInternalServerError)
 }
 
+
 func jsonResponse(writer http.ResponseWriter, responseData interface{}, httpStatusCode int) {
 	// Let's respond with a error corresponding to httpStatusCode.
 	writer.Header().Set("Content-Type", "application/json")

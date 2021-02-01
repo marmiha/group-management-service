@@ -22,7 +22,7 @@ func (s *Server) setupEndpoints(r *chi.Mux) {
 			r.Route("/current", func(r chi.Router) {
 				r.Use(s.WithUserAuthenticationCtx)
 				// GET for getting current user.
-				r.Get("/", s.getUser)
+				r.Get("/", s.getCurrentUser)
 				// PATCH for updating user information.
 				r.Patch("/", s.modifyUser)
 				// DELETE for unregistering.

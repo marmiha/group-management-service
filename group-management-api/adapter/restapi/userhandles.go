@@ -15,12 +15,20 @@ type LoginResponse struct {
 	Token string `json:"token"`
 }
 
+func (s *Server) getCurrentUser(writer http.ResponseWriter, request *http.Request) {
+	user := currentUserFromCtx(request)
+
+	if user == nil {
+		jsonResponse(writer, nil, http.StatusNotFound)
+		return
+	}
+
+	okResponse(writer, user)
+}
+
 
 func (s *Server) getUser(writer http.ResponseWriter, request *http.Request) {
 	user := userFromCtx(request)
-	if user == nil {
-		user = currentUserFromCtx(request)
-	}
 
 	if user == nil {
 		jsonResponse(writer, nil, http.StatusNotFound)
@@ -62,7 +70,7 @@ func (s *Server) modifyUser(writer http.ResponseWriter, request *http.Request) {
 	var p payload.ModifyUserPayload
 
 	next := validatePayload(func(writer http.ResponseWriter, request *http.Request) {
-		user := userFromCtx(request)
+		user := currentUserFromCtx(request)
 		user, err := s.ManageUser.ModifyUserDetails(user.ID, p)
 
 		if err != nil {
@@ -80,7 +88,7 @@ func (s *Server) unregisterUser(writer http.ResponseWriter, request *http.Reques
 	var p payload.UnregisterUserPayload
 
 	next := validatePayload(func(writer http.ResponseWriter, request *http.Request) {
-		user := userFromCtx(request)
+		user := currentUserFromCtx(request)
 		err := s.UserRegistration.UnregisterUser(user.ID, p)
 
 		if err != nil {

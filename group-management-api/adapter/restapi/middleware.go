@@ -33,7 +33,7 @@ func (s *Server) WithUserAuthenticationCtx(next http.Handler) http.Handler {
 		user, err := s.ListUser.Find(tokenClaims.UserID)
 		if err != nil {
 			if err == domain.ErrNoResult {
-				badRequestResponse(w, domain.ErrUserNotFound)
+				unauthorizedResponse(w, ErrInvalidBearerToken)
 				return
 			}
 			internalServerErrorResponse(w, err)
@@ -52,15 +52,15 @@ func (s *Server) GroupCtx(next http.Handler) http.Handler {
 		group := new(model.Group)
 
 		if stringId := chi.URLParam(r, groupIdParam); stringId != "" {
-			todoId, err := strconv.ParseInt(stringId, 0, 0)
+			groupID, err := strconv.ParseInt(stringId, 0, 0)
 			if err != nil {
 				badRequestResponse(w, err)
 				return
 			}
 
-			group, err = s.ListGroup.Find(model.GroupID(todoId))
+			group, err = s.ListGroup.Find(model.GroupID(groupID))
 			if err != nil {
-				notFoundResponse(w, domain.ErrNoResult)
+				jsonResponse(w, map[string]string{}, http.StatusBadRequest)
 				return
 			}
 		}
@@ -95,7 +95,7 @@ func (s *Server) UserCtx(next http.Handler) http.Handler {
 		if stringId := chi.URLParam(r, userIdParam); stringId != "" {
 			todoId, err := strconv.ParseInt(stringId, 0, 0)
 			if err != nil {
-				badRequestResponse(w, err)
+				jsonResponse(w, map[string]string{}, http.StatusBadRequest)
 				return
 			}
 
