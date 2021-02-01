@@ -1,8 +1,9 @@
 package restapi
 
 var (
-	contextUserKey = "currentUser"	// Request context key for the current logged in user.
-	contextGroupKey = "currentGroup"
+	contextCurrentUserKey = "current_user"	// Request context key for the current logged in user.
+	contextUserKey = "user"	// Request context key for the current logged in user.
+	contextGroupKey = "group"
 )
 
 var (

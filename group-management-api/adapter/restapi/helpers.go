@@ -9,7 +9,7 @@ import (
 )
 
 // Universal payload tester for Http endpoints. Throws validation errors or decoding errors.
-func validatePayload(next http.HandlerFunc, payload validation.Validatable) http.HandlerFunc{
+func validatePayload(next http.HandlerFunc, payload validation.Validatable) http.HandlerFunc {
 	return func(writer http.ResponseWriter, request *http.Request) {
 		// We will try to decode our request.body with our Validatable struct.
 		decodingError := json.NewDecoder(request.Body).Decode(&payload)
@@ -20,7 +20,7 @@ func validatePayload(next http.HandlerFunc, payload validation.Validatable) http
 			return
 		}
 
-		defer  request.Body.Close()
+		defer request.Body.Close()
 
 		// Validate the payload.
 		if validationErrors := payload.Validate(); validationErrors != nil {
@@ -37,7 +37,7 @@ func validatePayload(next http.HandlerFunc, payload validation.Validatable) http
 }
 
 func notFoundResponse(writer http.ResponseWriter, error error) {
-	response := map[string]string {
+	response := map[string]string{
 		"error": error.Error(),
 	}
 	jsonResponse(writer, response, http.StatusNotFound)
@@ -52,23 +52,29 @@ func okResponse(writer http.ResponseWriter, responseData interface{}) {
 }
 
 func badRequestResponse(writer http.ResponseWriter, error error) {
-	response := map[string]string {
+	response := map[string]string{
 		"error": error.Error(),
 	}
 	jsonResponse(writer, response, http.StatusBadRequest)
 }
 
 func unauthorizedResponse(writer http.ResponseWriter, error error) {
-	response := map[string]string {
+	response := map[string]string{
 		"error": error.Error(),
 	}
 	jsonResponse(writer, response, http.StatusUnauthorized)
 }
 
+func successfulDeleteResponse(writer http.ResponseWriter) {
+	// Our response, what we reply back. Using the map[string]string we can
+	// define json properties and their values.
+	response := map[string]string{}
+	jsonResponse(writer, response, http.StatusNoContent)
+}
 
 func internalServerErrorResponse(writer http.ResponseWriter, error error) {
 	// Our response, what we reply back. Using the map[string]string we can define json properties and their values.
-	response := map[string]string {
+	response := map[string]string{
 		"error": error.Error(),
 	}
 	jsonResponse(writer, response, http.StatusInternalServerError)
@@ -95,10 +101,14 @@ func jsonResponse(writer http.ResponseWriter, responseData interface{}, httpStat
 	return
 }
 
-func (s *Server) currentUserFromCtx(r *http.Request) *model.User {
+func currentUserFromCtx(r *http.Request) *model.User {
+	return r.Context().Value(contextCurrentUserKey).(*model.User)
+}
+
+func userFromCtx(r *http.Request) *model.User {
 	return r.Context().Value(contextUserKey).(*model.User)
 }
 
-func (s *Server) todoFromContext(r *http.Request) *model.Group {
+func groupFromCtx(r *http.Request) *model.Group {
 	return r.Context().Value(contextGroupKey).(*model.Group)
 }

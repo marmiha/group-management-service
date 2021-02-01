@@ -31,10 +31,11 @@ type ManageGroupUseCaseInterface interface {
 	// Basic functionalities.
 	CreateGroup(p payload.CreateGroupPayload) (*model.Group, error)
 	ModifyGroup(id model.GroupID, p payload.ModifyGroupPayload) (*model.Group, error)
+	DeleteGroup(id model.GroupID) error
 
 	// User management inside groups.
-	LeaveGroup(user *model.User) error
-	AssignUserToGroup(group payload.AssignUserToGroup) (*model.Group, error)
+	LeaveGroup(userID model.UserID) error
+	AssignUserToGroup(userID model.UserID, group payload.JoinGroup) (*model.Group, error)
 	GetGroupOfUser(id model.UserID) (*model.Group, error)
 }
 

@@ -5,14 +5,12 @@ import (
 	"group-management-api/domain/model"
 )
 
-type AssignUserToGroup struct {
-	UserID  model.UserID  `json:"user_id"`
+type JoinGroup struct {
 	GroupID model.GroupID `json:"group_id"`
 }
 
-func (a AssignUserToGroup) Validate() error {
+func (a JoinGroup) Validate() error {
 	return validation.ValidateStruct(&a,
 		validation.Field(&a.GroupID, validation.Required),
-		validation.Field(&a.UserID, validation.Required),
 	)
 }

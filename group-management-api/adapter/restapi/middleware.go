@@ -2,6 +2,7 @@ package restapi
 
 import (
 	"context"
+	"errors"
 	"github.com/go-chi/chi"
 	"group-management-api/domain"
 	"group-management-api/domain/model"
@@ -39,7 +40,7 @@ func (s *Server) WithUserAuthenticationCtx(next http.Handler) http.Handler {
 			return
 		}
 
-		ctx := context.WithValue(r.Context(), contextUserKey, user)
+		ctx := context.WithValue(r.Context(), contextCurrentUserKey, user)
 
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
@@ -65,6 +66,47 @@ func (s *Server) GroupCtx(next http.Handler) http.Handler {
 		}
 
 		ctx := context.WithValue(r.Context(), contextGroupKey, group)
+		next.ServeHTTP(w, r.WithContext(ctx))
+	})
+}
+
+func (s *Server) CurrentUserGroupCtx(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		currentUser := currentUserFromCtx(r)
+
+		if currentUser == nil{
+			internalServerErrorResponse(w, errors.New("CurrentUserGroupCtx has to be after UserAuthCtx"))
+			return
+		}
+
+		group, _ := s.ManageGroup.GetGroupOfUser(currentUser.ID)
+
+		ctx := context.WithValue(r.Context(), contextGroupKey, group)
+		next.ServeHTTP(w, r.WithContext(ctx))
+	})
+}
+
+
+// Injects the User into the context.
+func (s *Server) UserCtx(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		user := new(model.User)
+
+		if stringId := chi.URLParam(r, userIdParam); stringId != "" {
+			todoId, err := strconv.ParseInt(stringId, 0, 0)
+			if err != nil {
+				badRequestResponse(w, err)
+				return
+			}
+
+			user, err = s.ListUser.Find(model.UserID(todoId))
+			if err != nil {
+				notFoundResponse(w, domain.ErrNoResult)
+				return
+			}
+		}
+
+		ctx := context.WithValue(r.Context(), contextUserKey, user)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }

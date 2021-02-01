@@ -15,6 +15,21 @@ type LoginResponse struct {
 	Token string `json:"token"`
 }
 
+
+func (s *Server) getUser(writer http.ResponseWriter, request *http.Request) {
+	user := userFromCtx(request)
+	if user == nil {
+		user = currentUserFromCtx(request)
+	}
+
+	if user == nil {
+		jsonResponse(writer, nil, http.StatusNotFound)
+		return
+	}
+
+	okResponse(writer, user)
+}
+
 func (s *Server) registerUser(writer http.ResponseWriter, request *http.Request) {
 	var p payload.RegisterUserPayload
 
@@ -38,6 +53,42 @@ func (s *Server) registerUser(writer http.ResponseWriter, request *http.Request)
 		}
 
 		createdResponse(writer, response)
+	}, &p)
+
+	next.ServeHTTP(writer, request)
+}
+
+func (s *Server) modifyUser(writer http.ResponseWriter, request *http.Request) {
+	var p payload.ModifyUserPayload
+
+	next := validatePayload(func(writer http.ResponseWriter, request *http.Request) {
+		user := userFromCtx(request)
+		user, err := s.ManageUser.ModifyUserDetails(user.ID, p)
+
+		if err != nil {
+			badRequestResponse(writer, err)
+			return
+		}
+
+		okResponse(writer, user)
+	}, &p)
+
+	next.ServeHTTP(writer, request)
+}
+
+func (s *Server) unregisterUser(writer http.ResponseWriter, request *http.Request) {
+	var p payload.UnregisterUserPayload
+
+	next := validatePayload(func(writer http.ResponseWriter, request *http.Request) {
+		user := userFromCtx(request)
+		err := s.UserRegistration.UnregisterUser(user.ID, p)
+
+		if err != nil {
+			badRequestResponse(writer, err)
+			return
+		}
+
+		successfulDeleteResponse(writer)
 	}, &p)
 
 	next.ServeHTTP(writer, request)
