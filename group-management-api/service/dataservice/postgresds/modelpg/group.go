@@ -1,6 +1,8 @@
 package modelpg
 
-import "group-management-api/domain/model"
+import (
+	"group-management-api/domain/model"
+)
 
 type GroupID EntityID
 type Group struct {
@@ -13,23 +15,23 @@ type Group struct {
 	Members []*User `pg:"rel:has-many,join_fk:group_id"`
 }
 
-func (g Group) MapTo(gm *model.Group) {
-	GroupToModel(&g, gm)
+func (g *Group) MapTo(gm *model.Group) {
+	GroupToModel(g, gm)
 }
 
-func (g Group) MapFrom(gm *model.Group) {
-	ModelToGroup(gm, &g)
+func (g *Group) MapFrom(gm *model.Group) {
+	ModelToGroup(gm, g)
 }
 
-func (g Group) ToModel() *model.Group {
+func (g *Group) ToModel() *model.Group {
 	gm := new(model.Group)
-	GroupToModel(&g, gm)
+	ModelToGroup(gm, g)
 	return gm
 }
 
 func NewGroupFrom(gm *model.Group) *Group {
 	gpg := new(Group)
-	GroupToModel(gpg, gm)
+	gpg.MapFrom(gm)
 	return gpg
 }
 

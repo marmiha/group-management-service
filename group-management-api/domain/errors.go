@@ -9,8 +9,10 @@ import (
 var (
 	ErrUserWithEmailAlreadyExists = errors.New("UserWithEmailAlreadyExists")
 	ErrInvalidLoginCredentials    = errors.New("InvalidLoginCredentials")
-	ErrPasswordsDoNotMatch    = errors.New("PasswordsDoNotMatch")
+	ErrPasswordsDoNotMatch        = errors.New("PasswordsDoNotMatch")
 
-	ErrNoResult                   = errors.New("NoResult")
-	ErrUserAlreadyInGroup         = errors.New("UserAlreadyInGroup")
+	ErrNoResult           = errors.New("NoResult")
+	ErrUserAlreadyInGroup = errors.New("UserAlreadyInGroup")
+
+	ErrGroupWithNameAlreadyTaken = errors.New("GroupWithNameAlreadyTaken")
 )

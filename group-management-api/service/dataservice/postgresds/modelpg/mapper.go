@@ -1,6 +1,8 @@
 package modelpg
 
-import "group-management-api/domain/model"
+import (
+	"group-management-api/domain/model"
+)
 
 // Map User to model.User.
 func UserToModel(upg *User, um *model.User) {

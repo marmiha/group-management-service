@@ -16,17 +16,17 @@ type User struct {
 	Group   Group `pg:"rel:has-one"`
 }
 
-func (u User) MapTo(um *model.User) {
-	UserToModel(&u, um)
+func (u *User) MapTo(um *model.User) {
+	UserToModel(u, um)
 }
 
-func (u User) MapFrom(um *model.User) {
-	ModelToUser(um, &u)
+func (u *User) MapFrom(um *model.User) {
+	ModelToUser(um, u)
 }
 
-func (u User) ToModel() *model.User {
+func (u *User) ToModel() *model.User {
 	um := new(model.User)
-	UserToModel(&u, um)
+	UserToModel(u, um)
 	return um
 }
 

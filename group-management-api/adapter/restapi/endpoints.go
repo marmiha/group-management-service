@@ -29,7 +29,7 @@ func (s *Server) setupEndpoints(r *chi.Mux) {
 		})
 
 		// Routes for Groups.
-		r.Route("/group", func(r chi.Router) {
+		r.Route("/groups", func(r chi.Router) {
 			// GET gets all the groups.
 			r.Get("/", s.getGroups)
 			// POST to create a group.

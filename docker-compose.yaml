@@ -8,7 +8,7 @@ services:
       context: ./group-management-api
     environment:
       - PORT=3001
-      - POSTGRES_HOST=postgres-data
+      - POSTGRES_HOST=postgres-data:5432
       - POSTGRES_USER
       - POSTGRES_PASSWORD
     ports:

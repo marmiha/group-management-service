@@ -28,9 +28,9 @@ func (mg ManageGroupUseCase) CreateGroup(p payload.CreateGroupPayload) (*model.G
 	}
 
 	// Duplicate check
-	_, err = mg.GroupData.GetByName(group.Name)
-	if !errors.Is(err, dataservice.ErrNotFound) {
-		return nil, err
+	groupDuplicate, err := mg.GroupData.GetByName(group.Name)
+	if groupDuplicate != nil {
+		return nil, domain.ErrGroupWithNameAlreadyTaken
 	}
 
 	// Group creation.
