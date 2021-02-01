@@ -18,6 +18,8 @@ func main() {
 	fmt.Printf("Postgres password: %s\n", postgresPassword)
 	fmt.Printf("Postgres user: %s\n", postgresUser)
 
+
+
 	http.HandleFunc("/", func(writer http.ResponseWriter, request *http.Request) {
 		fmt.Fprintf(writer, "Hello World")
 	})
