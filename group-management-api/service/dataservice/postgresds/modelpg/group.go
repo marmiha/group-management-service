@@ -24,12 +24,20 @@ func (g *Group) MapFrom(gm *model.Group) {
 }
 
 func (g *Group) ToModel() *model.Group {
+	if g == nil {
+		return nil
+	}
+
 	gm := new(model.Group)
-	ModelToGroup(gm, g)
+	GroupToModel(g, gm)
 	return gm
 }
 
 func NewGroupFrom(gm *model.Group) *Group {
+	if gm == nil {
+		return nil
+	}
+
 	gpg := new(Group)
 	gpg.MapFrom(gm)
 	return gpg

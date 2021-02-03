@@ -44,5 +44,5 @@ type ListGroupUseCaseInterface interface {
 	Find(id model.GroupID) (*model.Group, error)
 	GroupsList() ([]*model.Group, error)
 
-	ListUsersOfGroup(id model.GroupID) ([]*model.User, error)
+	UsersOfGroupList(id model.GroupID) ([]*model.User, error)
 }

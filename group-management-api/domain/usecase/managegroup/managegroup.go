@@ -78,13 +78,13 @@ func (mg ManageGroupUseCase) ModifyGroup(id model.GroupID, p payload.ModifyGroup
 
 func (mg ManageGroupUseCase) LeaveGroup(userID model.UserID) error {
 	// Datastore fetch.
-	_, err := mg.GetGroupOfUser(userID)
-	if err != nil {
-		return err
+	group, _ := mg.GetGroupOfUser(userID)
+	if group == nil {
+		return nil
 	}
 
 	// Instruct datastore to remove user from group.
-	err = mg.GroupData.LeaveGroup(userID)
+	err := mg.GroupData.LeaveGroup(userID)
 	if err != nil {
 		return err
 	}

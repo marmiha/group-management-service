@@ -25,12 +25,19 @@ func (u *User) MapFrom(um *model.User) {
 }
 
 func (u *User) ToModel() *model.User {
+	if u == nil {
+		return nil
+	}
 	um := new(model.User)
 	UserToModel(u, um)
 	return um
 }
 
 func NewUserFrom(um *model.User) *User {
+	if um == nil {
+		return nil
+	}
+
 	upg := new(User)
 	upg.MapFrom(um)
 	return upg

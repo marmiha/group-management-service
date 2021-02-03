@@ -6,6 +6,9 @@ import (
 
 // Map User to model.User.
 func UserToModel(upg *User, um *model.User) {
+	if um == nil {
+		return
+	}
 	// Entity struct fields
 	um.UpdatedAt = upg.UpdatedAt
 	um.CreatedAt = upg.CreatedAt
@@ -17,13 +20,19 @@ func UserToModel(upg *User, um *model.User) {
 	um.PasswordHash = upg.PasswordHash
 
 	// Group conversion.
-	gm := new(model.Group)
-	GroupToModel(upg.Group, gm)
-	um.Group = gm
+	if upg.Group != nil {
+		gm := new(model.Group)
+		GroupToModel(upg.Group, gm)
+		um.Group = gm
+	}
 }
 
 // Map Group to model.Group.
 func GroupToModel(gpg *Group, gm *model.Group) {
+	if gm == nil {
+		return
+	}
+
 	// Entity struct fields
 	gm.UpdatedAt = gpg.UpdatedAt
 	gm.CreatedAt = gpg.CreatedAt
@@ -42,6 +51,9 @@ func GroupToModel(gpg *Group, gm *model.Group) {
 
 // Map model.User to User.
 func ModelToUser(um *model.User, upg *User) {
+	if upg == nil {
+		return
+	}
 	// Entity struct fields
 	upg.UpdatedAt = um.UpdatedAt
 	upg.CreatedAt = um.CreatedAt
@@ -53,13 +65,18 @@ func ModelToUser(um *model.User, upg *User) {
 	upg.PasswordHash = um.PasswordHash
 
 	// Group conversion.
-	gm := new(Group)
-	ModelToGroup(um.Group, gm)
-	upg.Group = gm
+	if um.Group != nil {
+		gm := new(Group)
+		ModelToGroup(um.Group, gm)
+		upg.Group = gm
+	}
 }
 
 // Map model.Group to Group.
 func ModelToGroup(gm *model.Group, gpg *Group) {
+	if gpg == nil {
+		return
+	}
 	// Entity struct fields
 	gpg.UpdatedAt = gm.UpdatedAt
 	gpg.CreatedAt = gm.CreatedAt

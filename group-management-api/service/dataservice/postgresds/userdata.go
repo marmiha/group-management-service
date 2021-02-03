@@ -102,7 +102,10 @@ func (ud UserData) GetByEmail(email string) (*model.User, error) {
 func (ud UserData) GetListAll() ([]*model.User, error) {
 	usersPg := &[]*modelpg.User{}
 
-	err := ud.Model(usersPg).Select()
+	err := ud.Model(usersPg).
+		Relation("Group").
+		Select()
+
 	if err != nil {
 		return nil, err
 	}

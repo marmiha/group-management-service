@@ -8,7 +8,7 @@ type Group struct {
 
 	ID      GroupID `json:"id"`
 	Name    string  `json:"name"`
-	Members []*User  `json:"users"`
+	Members []*User  `json:"users,omitempty"`
 }
 
 func (g Group) Validate() error {

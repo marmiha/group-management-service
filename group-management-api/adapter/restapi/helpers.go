@@ -66,10 +66,7 @@ func unauthorizedResponse(writer http.ResponseWriter, error error) {
 }
 
 func successfulDeleteResponse(writer http.ResponseWriter) {
-	// Our response, what we reply back. Using the map[string]string we can
-	// define json properties and their values.
-	response := map[string]string{}
-	jsonResponse(writer, response, http.StatusNoContent)
+	jsonResponse(writer, nil, http.StatusNoContent)
 }
 
 func internalServerErrorResponse(writer http.ResponseWriter, error error) {
@@ -86,20 +83,12 @@ func jsonResponse(writer http.ResponseWriter, responseData interface{}, httpStat
 	writer.Header().Set("Content-Type", "application/json")
 	writer.WriteHeader(httpStatusCode)
 
-	// Our response, what we reply back. Using the map[string]string we can
-	// define json properties and their values.
-	// If data is empty, then send an empty object.
-	if responseData == nil {
-		responseData = map[string]string{}
+	// If there is any data to send, encode it.
+	if responseData != nil {
+		if encodingError := json.NewEncoder(writer).Encode(responseData); encodingError != nil {
+			internalServerErrorResponse(writer, encodingError)
+		}
 	}
-
-	// Encode the response and if something goes wrong with the encoding then
-	// return a internal server error response.
-	if encodingError := json.NewEncoder(writer).Encode(responseData); encodingError != nil {
-		internalServerErrorResponse(writer, encodingError)
-		return
-	}
-	return
 }
 
 func currentUserFromCtx(r *http.Request) *model.User {

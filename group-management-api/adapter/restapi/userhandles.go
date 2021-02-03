@@ -17,12 +17,6 @@ type LoginResponse struct {
 
 func (s *Server) getCurrentUser(writer http.ResponseWriter, request *http.Request) {
 	user := currentUserFromCtx(request)
-
-	if user == nil {
-		jsonResponse(writer, nil, http.StatusNotFound)
-		return
-	}
-
 	okResponse(writer, user)
 }
 

@@ -1,16 +1,17 @@
 package restapi
 
 import (
+	"fmt"
 	"group-management-api/domain/payload"
 	"net/http"
 )
 
 func (s *Server) leaveGroup(writer http.ResponseWriter, request *http.Request) {
 	user := currentUserFromCtx(request)
-
 	err := s.ManageGroup.LeaveGroup(user.ID)
 
 	if err != nil {
+		fmt.Printf("Err: %v", err)
 		badRequestResponse(writer, err)
 		return
 	}
@@ -54,6 +55,7 @@ func (s *Server) modifyGroup(writer http.ResponseWriter, request *http.Request) 
 
 	next := validatePayload(func(writer http.ResponseWriter, request *http.Request) {
 		group := groupFromCtx(request)
+
 		group, err := s.ManageGroup.ModifyGroup(group.ID, p)
 
 		if err != nil {
@@ -69,10 +71,6 @@ func (s *Server) modifyGroup(writer http.ResponseWriter, request *http.Request) 
 
 func (s *Server) getGroup(writer http.ResponseWriter, request *http.Request) {
 	group := groupFromCtx(request)
-	if group == nil {
-		jsonResponse(writer, map[string]string{}, http.StatusNotFound)
-		return
-	}
 	okResponse(writer, group)
 }
 
@@ -85,6 +83,19 @@ func (s *Server) getGroups(writer http.ResponseWriter, _ *http.Request) {
 	}
 
 	okResponse(writer, groups)
+}
+
+func (s *Server) getUsersOfGroup(writer http.ResponseWriter, request *http.Request) {
+	group := groupFromCtx(request)
+
+	users, err :=  s.ListGroup.UsersOfGroupList(group.ID)
+
+	if err != nil {
+		badRequestResponse(writer, err)
+		return
+	}
+
+	okResponse(writer, users)
 }
 
 

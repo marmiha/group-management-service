@@ -29,7 +29,7 @@ func (lg ListGroupUseCase) GroupsList() ([]*model.Group, error) {
 	return groups, nil
 }
 
-func (lg ListGroupUseCase) ListUsersOfGroup(id model.GroupID) ([]*model.User, error) {
+func (lg ListGroupUseCase) UsersOfGroupList(id model.GroupID) ([]*model.User, error) {
 	users, err := lg.GroupData.GetUsersOfGroup(id)
 	if err != nil {
 		return nil, err

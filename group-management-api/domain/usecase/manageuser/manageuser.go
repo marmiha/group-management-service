@@ -1,7 +1,7 @@
 package manageuser
 
 import (
-	"errors"
+	"group-management-api/domain"
 	"group-management-api/domain/model"
 	"group-management-api/domain/payload"
 	"group-management-api/domain/usecase"
@@ -31,9 +31,9 @@ func (mu ManageUserUseCase) ModifyUserDetails(id model.UserID, p payload.ModifyU
 	// Check if email modification is present.
 	if p.Email != "" {
 		// Check if email is already taken.
-		_, err := mu.UserData.GetByEmail(p.Email)
-		if !errors.Is(err, dataservice.ErrNotFound) {
-			return nil, err
+		userEmail, _ := mu.UserData.GetByEmail(p.Email)
+		if userEmail != nil {
+			return nil, domain.ErrUserWithEmailAlreadyExists
 		}
 
 		// Change email.

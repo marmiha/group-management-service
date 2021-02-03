@@ -41,7 +41,6 @@ func (s *Server) WithUserAuthenticationCtx(next http.Handler) http.Handler {
 		}
 
 		ctx := context.WithValue(r.Context(), contextCurrentUserKey, user)
-
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
@@ -60,7 +59,7 @@ func (s *Server) GroupCtx(next http.Handler) http.Handler {
 
 			group, err = s.ListGroup.Find(model.GroupID(groupID))
 			if err != nil {
-				jsonResponse(w, map[string]string{}, http.StatusBadRequest)
+				jsonResponse(w,nil, http.StatusNotFound)
 				return
 			}
 		}
@@ -81,6 +80,12 @@ func (s *Server) CurrentUserGroupCtx(next http.Handler) http.Handler {
 
 		group, _ := s.ManageGroup.GetGroupOfUser(currentUser.ID)
 
+		// Post is excluded, as it is used for joining a group.
+		if group == nil && r.Method != http.MethodPost{
+			jsonResponse(w,nil, http.StatusNotFound)
+			return
+		}
+
 		ctx := context.WithValue(r.Context(), contextGroupKey, group)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
@@ -95,13 +100,13 @@ func (s *Server) UserCtx(next http.Handler) http.Handler {
 		if stringId := chi.URLParam(r, userIdParam); stringId != "" {
 			todoId, err := strconv.ParseInt(stringId, 0, 0)
 			if err != nil {
-				jsonResponse(w, map[string]string{}, http.StatusBadRequest)
+				jsonResponse(w, err, http.StatusBadRequest)
 				return
 			}
 
 			user, err = s.ListUser.Find(model.UserID(todoId))
 			if err != nil {
-				notFoundResponse(w, domain.ErrNoResult)
+				jsonResponse(w,nil, http.StatusNotFound)
 				return
 			}
 		}

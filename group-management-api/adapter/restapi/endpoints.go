@@ -29,11 +29,13 @@ func (s *Server) setupEndpoints(r *chi.Mux) {
 				r.Delete("/", s.unregisterUser)
 
 				r.Route("/group", func(r chi.Router) {
+					// This will get the group from Datastore and put it into request context.
 					r.Use(s.CurrentUserGroupCtx)
-					// GET for fetching the current group.
-					r.Get("/", s.getGroup)
+
 					// POST for joining a group.
 					r.Post("/", s.joinGroup)
+					// GET for fetching the current group.
+					r.Get("/", s.getGroup)
 					// DELETE for leaving the current group.
 					r.Delete("/", s.leaveGroup)
 				})
@@ -62,6 +64,10 @@ func (s *Server) setupEndpoints(r *chi.Mux) {
 				r.Delete("/", s.deleteGroup)
 				// PATCH to modify group name.
 				r.Patch("/", s.modifyGroup)
+
+				r.Route("/users", func(r chi.Router) {
+					r.Get("/", s.getUsersOfGroup)
+				})
 			})
 		})
 	})
