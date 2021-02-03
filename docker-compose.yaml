@@ -9,10 +9,11 @@ services:
     environment:
       - PORT=3001
       - POSTGRES_HOST=postgres-data:5432
-      - POSTGRES_USER
-      - POSTGRES_PASSWORD
+      - POSTGRES_USER=defaultuser
+      - POSTGRES_PASSWORD=defaultpassword
+      - JWT_KEY=defaultjwtkey
     ports:
-    - ${API_PORT}:3001
+    - ${API_PORT:-3000}:3001
     networks:
       - group-management
   postgres-data:
@@ -20,8 +21,8 @@ services:
     build:
       context: ./postgres-data
     environment:
-      - POSTGRES_USER
-      - POSTGRES_PASSWORD
+      - POSTGRES_USER=defaultuser
+      - POSTGRES_PASSWORD=defaultpassword
     networks:
       - group-management
 
