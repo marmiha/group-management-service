@@ -13,7 +13,7 @@ type User struct {
 	PasswordHash string
 
 	GroupID GroupID
-	Group   Group `pg:"rel:has-one"`
+	Group   *Group `pg:"rel:has-one"`
 }
 
 func (u *User) MapTo(um *model.User) {

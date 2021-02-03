@@ -18,8 +18,8 @@ func UserToModel(upg *User, um *model.User) {
 
 	// Group conversion.
 	gm := new(model.Group)
-	GroupToModel(&upg.Group, gm)
-	um.Group = *gm
+	GroupToModel(upg.Group, gm)
+	um.Group = gm
 }
 
 // Map Group to model.Group.
@@ -54,8 +54,8 @@ func ModelToUser(um *model.User, upg *User) {
 
 	// Group conversion.
 	gm := new(Group)
-	ModelToGroup(&um.Group, gm)
-	upg.Group = *gm
+	ModelToGroup(um.Group, gm)
+	upg.Group = gm
 }
 
 // Map model.Group to Group.
