@@ -6,30 +6,33 @@ import (
 )
 
 type AppConfig struct {
-	ExposedPort string // At which port the Application is accessible.
+	// At which port the Application is accessible.
+	ExposedPort string `env:"ExposedPort"`
 
 	// Logger configuration.
 	LoggerConfig struct {
-		LogLevel impl.LoggerLevel
+		LogLevel impl.LoggerLevel `env:"LogLevel"`
 	}
 
 	// Containing configuration for DataService modules (Databases or data services).
 	DataServiceConfig struct {
 		UserDataServiceConfig struct {
 			// Chosen UserDataService Implementation.
-			Impl impl.DataServiceImpl
+			Impl impl.DataServiceImpl `env:"DataService.User.Impl"`
 		}
 
 		GroupDataServiceConfig struct {
 			// Chosen GroupDataService Implementation
-			Impl impl.DataServiceImpl
+			Impl impl.DataServiceImpl `env:"DataService.Group.Impl"`
 		}
 
 		// DataService Implementations.
 		PostgresDataServiceConfig struct {
-			PostgresHost     string
-			PostgresUser     string
-			PostgresPassword string
+			PostgresHost     string `env:"DataService.Postgres.Host"`
+			PostgresUser     string `env:"DataService.Postgres.User"`
+			PostgresPassword string `env:"DataService.Postgres.Password"`
+			ConnPoolSize		int `env:"DataService.Postgres.ConnPoolSize"`
+			DropTableOnConn	bool `env:"Dataservice.Postgres.DropTableOnConn"`
 		}
 	}
 
@@ -41,10 +44,11 @@ type AppConfig struct {
 	// Containing configuration for Adapter modules (API).
 	AdapterConfig struct {
 		// Chosen Adapter Implementation Selection.
-		Impl impl.AdapterImpl
+		Impl impl.AdapterImpl `env:"Adapter.Impl"`
 		// Adapter Implementations.
 		RestConfig struct {
-			JwtKey string // Used for singing our tokens.
+			// Used for singing our tokens.
+			JwtKey string `env:"Adapter.Rest.JwtKey"`
 		}
 	}
 }

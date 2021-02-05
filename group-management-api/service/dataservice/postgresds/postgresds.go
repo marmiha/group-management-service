@@ -6,13 +6,28 @@ import (
 	"group-management-api/service/dataservice/postgresds/modelpg"
 )
 
+func NewConnectionAndSchemaCreation(opts *pg.Options, dropTable bool) (*pg.DB, error) {
+	db := NewDatabaseConnection(opts)
+	err := CreateSchema(db, &orm.CreateTableOptions{
+		IfNotExists: true,
+	}, dropTable)
+
+	if err != nil{
+		// Close the connection as we will not need it.
+		defer db.Close()
+		return nil, err
+	}
+
+	return db, nil
+}
+
 func NewDatabaseConnection(opts *pg.Options) *pg.DB {
 	db := pg.Connect(opts)
 	return db
 }
 
 // Creates Schema From the models
-func CreateSchema(db *pg.DB, options *orm.CreateTableOptions) error {
+func CreateSchema(db *pg.DB, options *orm.CreateTableOptions, dropTable bool) error {
 	// Our database models/structs.
 	models := []interface{} {
 		(*modelpg.User)(nil),
@@ -23,13 +38,20 @@ func CreateSchema(db *pg.DB, options *orm.CreateTableOptions) error {
 	// Create table for each of these models.
 	for _, model := range models {
 		// Drop tables.
-		err := db.Model(model).DropTable(&orm.DropTableOptions{
-			IfExists: true,
-			Cascade:  true,
-		})
-		if err != nil {
-			return err
+		exists, err := db.Model(model).Exists()
+
+		// Drop the table if it exists.
+		if exists {
+			err = db.Model(model).DropTable(&orm.DropTableOptions{
+				IfExists: dropTable,
+				Cascade:  dropTable,
+			})
+
+			if err != nil {
+				return err
+			}
 		}
+
 		// Make Tables.
 		err = db.Model(model).CreateTable(options)
 		if err != nil {

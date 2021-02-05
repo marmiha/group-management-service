@@ -1,43 +1,49 @@
+// Package that defines our entry point into microservice execution.
 package app
 
 import (
+	"github.com/joeshaw/envdecode"
 	"github.com/sirupsen/logrus"
-	"github.com/spf13/viper"
 	"group-management-api/app/config"
 	"group-management-api/app/config/impl"
 	"group-management-api/app/container"
+	"group-management-api/app/factory"
 	"group-management-api/app/logger"
 )
 
 func InitApp() *container.Container{
-
 	// Read configurations from environment.
 	cfg := InitConfig()
-
 	// New application container.
-	con := container.New(cfg)
-
+	c := container.New(cfg)
 	// Logger initialization.
-	InitLogger(con)
-
-
-	return con
+	InitLogger(c)
+	err := factory.InitAdapter(c)
+	if err != nil {
+		logger.Log.WithField("err", err).Fatal("Something went wrong initializing the application.")
+	}
+	return c
 }
 
 func InitConfig() *config.AppConfig{
-	var appConfig config.AppConfig
-	err := viper.Unmarshal(&appConfig)
-	if err != nil {
+	cfg := config.AppConfig{}
+
+	if err := envdecode.Decode(&cfg); err != nil {
 		logger.Log.
 			WithField("err", err).
 			Fatal("Unable decode environment variables into struct.")
 	}
-	return &appConfig
+
+	return &cfg
 }
 
 func InitLogger(c *container.Container) {
-	logLevel := c.AppConfig.LoggerConfig.LogLevel
+	// Shut down all shutdownables when calling Log.Fatal().
+	logrus.RegisterExitHandler(func() {
+		c.ShutdownAll()
+	})
 
+	logLevel := c.AppConfig.LoggerConfig.LogLevel
 	var logrusLevel logrus.Level
 
 	switch logLevel {
@@ -56,9 +62,10 @@ func InitLogger(c *container.Container) {
 	case impl.PanicLevel:
 		logrusLevel = logrus.PanicLevel
 	default:
-		logger.Log.WithField("LogLevel", logLevel).Panic("Unknown logging level in config")
+		logger.Log.WithField("LogLevel", logLevel).Fatal("Unknown logging level in config")
 	}
 
+	// Set the logging level provided.
 	logger.Log.SetLevel(logrusLevel)
 	logger.Log.WithFields(logrus.Fields{
 		"LogLevel": logLevel,

@@ -6,8 +6,12 @@ import (
 
 type Server struct {
 	adapter.BusinessDomain
+	JwtSecret string
 }
 
-func NewServer(domain *adapter.BusinessDomain) *Server {
-	return &Server{*domain}
+func NewServer(domain *adapter.BusinessDomain, jwtSecret string) *Server {
+	return &Server{
+		BusinessDomain: *domain,
+		JwtSecret: jwtSecret,
+	}
 }

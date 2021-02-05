@@ -7,11 +7,17 @@ services:
     build:
       context: ./group-management-api
     environment:
-      - PORT=3001
-      - POSTGRES_HOST=postgres-data:5432
-      - POSTGRES_USER=defaultuser
-      - POSTGRES_PASSWORD=defaultpassword
-      - JWT_KEY=defaultjwtkey
+      - ExposedPort=3001
+      - LogLevel=info
+      - DataService.User.Impl=postgresds
+      - DataService.Group.Impl=postgresds
+      - DataService.Postgres.Host=postgres-data:5432
+      - DataService.Postgres.User=defaultuser
+      - DataService.Postgres.Password=defaultpassword
+      - DataService.Postgres.ConnPoolSize=20
+      - DataService.Postgres.DropTableOnConn=true
+      - Adapter.Impl=rest
+      - Adapter.Rest.JwtKey=defaultjwtkey
     ports:
     - ${API_PORT:-3000}:3001
     networks:
