@@ -33,6 +33,7 @@ func GetUserDataService(c *container.Container) (dataservice.UserDataInterface, 
 
 			// If all good set IT!
 			udds = x
+		// Multiple different implementations can be added which will be pinpointed by configuration.
 		default:
 			return nil, errors.New("unknown group data service implementation " + string(udsi))
 		}
@@ -60,6 +61,7 @@ func GetGroupDataService(c *container.Container) (dataservice.GroupDataInterface
 			ugds = postgresds.GroupData{
 				DB: tempdb,
 			}
+		// Multiple different implementations can be added which will be pinpointed by configuration.
 		default:
 			return nil, errors.New("unknown group data service implementation " + string(gdsi))
 		}
