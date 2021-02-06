@@ -1,0 +1,98 @@
+consumes:
+- application/json
+host: localhost:3001
+info:
+  contact:
+    email: miha.markez@gmail.com
+  license:
+    name: MIT
+    url: http://opensource.org/licenses/MIT
+  title: Rest Api for Group Management.
+  version: 0.0.1
+paths:
+  /groups:
+    get:
+      operationId: getGroups
+      summary: Gets all the groups.
+    post:
+      operationId: createGroup
+      summary: Creates a group with a name, it that is not already taken.
+  /groups/{group_id}:
+    delete:
+      operationId: deleteGroup
+      summary: Delete the group denoted by group_id.
+    get:
+      operationId: getGroup
+      summary: Get a group which is denoted by group_id.
+    patch:
+      description: |-
+        Change the group name. If the name is taken it will return a
+        bad request error with explanation.
+      operationId: modifyGroup
+  /groups/{group_id}/users:
+    get:
+      operationId: getMembersOfGroup
+      summary: Gets all the members of a group denoted by user_id.
+  /login:
+    post:
+      description: if the credentials are correct.
+      operationId: loginUser
+      summary: Log in the user with email and password. Returns a Bearer token,
+  /users:
+    get:
+      operationId: getUsers
+      summary: Gets all the users.
+    post:
+      description: |-
+        Register an user with email, name and password. The email has to
+        be unique amongst the already registered members.
+      operationId: registerUser
+  /users/{user_id}:
+    get:
+      operationId: getUser
+      summary: Get the user which is denoted by user_id.
+  /users/current:
+    delete:
+      description: |-
+        Unregister the user that is denoted from the Bearer token. Supply
+        the api with email and current password, so that that the user confirms
+        his choice.
+      operationId: unregisterCurrentUser
+    get:
+      description: |-
+        Get the currently logged in user from Bearer token. Basically
+        a profile fetcher.
+      operationId: getSignedInUser
+    patch:
+      description: |-
+        Modify user details, which are email and the name. The email
+        has to be unique amongst the already registered users. At least
+        one of these parameters have to be supplied.
+      operationId: modifyCurrentUser
+  /users/current/group:
+    delete:
+      description: |-
+        Leave the current group. In any instance the API returns a successful
+        delete response.
+      operationId: leaveGroup
+    get:
+      description: |-
+        Get the group from the currently logged in user. Returns bad request
+        if the user has not joined a group yet.
+      operationId: getCurrentUserGroup
+    post:
+      description: |-
+        Join a group denoted by group_id. The group should exist and the user
+        should not be in a group already. If these circumstances are not respected
+        an error will be returned.
+      operationId: joinGroup
+produces:
+- application/json
+schemes:
+- http
+securityDefinitions:
+  bearer_auth:
+    in: header
+    name: JWT
+    type: apiKey
+swagger: "2.0"
