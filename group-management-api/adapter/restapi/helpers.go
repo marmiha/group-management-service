@@ -37,8 +37,8 @@ func validatePayload(next http.HandlerFunc, payload validation.Validatable) http
 }
 
 func notFoundResponse(writer http.ResponseWriter, error error) {
-	response := map[string]string{
-		"error": error.Error(),
+	response := ErrorResponse{
+		ErrorString: error.Error(),
 	}
 	jsonResponse(writer, response, http.StatusNotFound)
 }
@@ -52,15 +52,15 @@ func okResponse(writer http.ResponseWriter, responseData interface{}) {
 }
 
 func badRequestResponse(writer http.ResponseWriter, error error) {
-	response := map[string]string{
-		"error": error.Error(),
+	response := ErrorResponse{
+		ErrorString: error.Error(),
 	}
 	jsonResponse(writer, response, http.StatusBadRequest)
 }
 
 func unauthorizedResponse(writer http.ResponseWriter, error error) {
-	response := map[string]string{
-		"error": error.Error(),
+	response := ErrorResponse{
+		ErrorString: error.Error(),
 	}
 	jsonResponse(writer, response, http.StatusUnauthorized)
 }
@@ -71,8 +71,8 @@ func successfulDeleteResponse(writer http.ResponseWriter) {
 
 func internalServerErrorResponse(writer http.ResponseWriter, error error) {
 	// Our response, what we reply back. Using the map[string]string we can define json properties and their values.
-	response := map[string]string{
-		"error": error.Error(),
+	response := ErrorResponse{
+		ErrorString: error.Error(),
 	}
 	jsonResponse(writer, response, http.StatusInternalServerError)
 }

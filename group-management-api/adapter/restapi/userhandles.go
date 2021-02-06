@@ -1,19 +1,9 @@
 package restapi
 
 import (
-	"group-management-api/domain/model"
 	"group-management-api/domain/payload"
 	"net/http"
 )
-
-type RegisterResponse struct {
-	User  model.User `json:"user"`
-	Token string     `json:"token"`
-}
-
-type LoginResponse struct {
-	Token string `json:"token"`
-}
 
 func (s *Server) getCurrentUser(writer http.ResponseWriter, request *http.Request) {
 	user := currentUserFromCtx(request)

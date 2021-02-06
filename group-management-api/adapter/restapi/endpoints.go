@@ -11,9 +11,13 @@ func (s *Server) setupEndpoints(r *chi.Mux) {
 			// POST login user, gets the jwt key.
 			// swagger:route POST /login loginUser
 			//
-			// Log in the user with email and password. Returns a Bearer token,
-			// if the credentials are correct.
+			// Log in the user with email and password.
 			//
+			// Returns a Bearer token, if the credentials are correct.
+			//
+			// Responses:
+			//  200: LoginResponse
+			// 	400: ErrorResponse
 			r.Post("/", s.loginUser)
 		})
 
@@ -30,9 +34,13 @@ func (s *Server) setupEndpoints(r *chi.Mux) {
 			// POST to register
 			// swagger:route POST /users registerUser
 			//
-			// Register an user with email, name and password. The email has to
-			// be unique amongst the already registered members.
+			// Register an user with email, name and password.
 			//
+			// The email has to be unique amongst the already registered members.
+			//
+			// Responses:
+			//  200: RegisterResponse
+			//  400: ErrorResponse
 			r.Post("/", s.registerUser)
 
 
@@ -45,26 +53,28 @@ func (s *Server) setupEndpoints(r *chi.Mux) {
 				// GET for getting current user.
 				// swagger:route GET /users/current getSignedInUser
 				//
-				// Get the currently logged in user from Bearer token. Basically
-				// a profile fetcher.
+				// Get the currently logged in user from Bearer token.
+				//
+				// Basically a profile fetcher.
 				//
 				r.Get("/", s.getCurrentUser)
 
 				// PATCH for updating user information.
 				// swagger:route PATCH /users/current modifyCurrentUser
 				//
-				// Modify user details, which are email and the name. The email
-				// has to be unique amongst the already registered users. At least
-				// one of these parameters have to be supplied.
+				// Modify user details, which are email and the name.
+				//
+				// The email has to be unique amongst the already registered users. At least one of these parameters have to be supplied.
+				//
 				//
 				r.Patch("/", s.modifyUser)
 
 				// DELETE for unregistering.
 				// swagger:route DELETE /users/current unregisterCurrentUser
 				//
-				// Unregister the user that is denoted from the Bearer token. Supply
-				// the api with email and current password, so that that the user confirms
-				// his choice.
+				// Unregister the user that is denoted from the Bearer token.
+				//
+				// Supply the api with email and current password, so that that the user confirms his choice.
 				//
 				r.Delete("/", s.unregisterUser)
 
@@ -77,25 +87,27 @@ func (s *Server) setupEndpoints(r *chi.Mux) {
 					// GET for fetching the current group.
 					// swagger:route GET /users/current/group getCurrentUserGroup
 					//
-					// Get the group from the currently logged in user. Returns bad request
-					// if the user has not joined a group yet.
+					// Get the group from the currently logged in user.
+					//
+					// Returns bad request if the user has not joined a group yet.
 					//
 					r.Get("/", s.getGroup)
 
 					// POST for joining a group.
 					// swagger:route POST /users/current/group joinGroup
 					//
-					// Join a group denoted by group_id. The group should exist and the user
-					// should not be in a group already. If these circumstances are not respected
-					// an error will be returned.
+					// Join a group denoted by group_id.
+					//
+					// The group should exist and the user should not be in a group already. If these circumstances are not respected an error will be returned.
 					//
 					r.Post("/", s.joinGroup)
 
 					// DELETE for leaving the current group.
 					// swagger:route DELETE /users/current/group leaveGroup
 					//
-					// Leave the current group. In any instance the API returns a successful
-					// delete response.
+					// Leave the current group.
+					//
+					// In any instance the API returns a successful delete response.
 					//
 					r.Delete("/", s.leaveGroup)
 				})
@@ -154,8 +166,9 @@ func (s *Server) setupEndpoints(r *chi.Mux) {
 				// PATCH to modify group name.
 				// swagger:route PATCH /groups/{group_id} modifyGroup
 				//
-				// Change the group name. If the name is taken it will return a
-				// bad request error with explanation.
+				// Change the group name.
+				//
+				// If the name is taken it will return a bad request error with explanation.
 				//
 				r.Patch("/", s.modifyGroup)
 
