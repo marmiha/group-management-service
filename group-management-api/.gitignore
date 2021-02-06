@@ -1,6 +1,8 @@
 # Go modules vendor foulder
 vendor
 
+swagger.yml
+
 # Binaries for programs and plugins
 *.exe
 *.exe~
