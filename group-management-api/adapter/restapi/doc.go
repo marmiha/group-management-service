@@ -1,11 +1,10 @@
 // Rest Api for Group Management.
 //
 // Schemes: http
-// Host: localhost:3001
-// BasePath: api/v1
+// Host: localhost:3000
+// BasePath: /api/v1
 // Version: 1.0.0
-// Contact: miha.markez@gmail.com
-// License: MIT http://opensource.org/licenses/MIT
+// Contact: Miha Markež<miha.markez@gmail.com>
 //
 // Consumes:
 // - application/json
@@ -19,7 +18,7 @@
 // SecurityDefinitions:
 // bearer_auth:
 //        type: apiKey
-//        name: JWT
+//        name: Authorization
 //        in: header
 //
 // swagger:meta

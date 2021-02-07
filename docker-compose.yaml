@@ -7,7 +7,7 @@ services:
     build:
       context: ./group-management-api
     environment:
-      - ExposedPort=3001
+      - ExposedPort=3000
       - LogLevel=info
       - DataService.User.Impl=postgresds
       - DataService.Group.Impl=postgresds
@@ -19,7 +19,7 @@ services:
       - Adapter.Impl=rest
       - Adapter.Rest.JwtKey=defaultjwtkey
     ports:
-    - ${API_PORT:-3000}:3001
+    - ${ApiPort:-3000}:${ExposedPort-3000}
     networks:
       - group-management
   postgres-data:
