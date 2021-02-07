@@ -1,0 +1,621 @@
+basePath: /api/v1
+consumes:
+- application/json
+definitions:
+  ChangePasswordPayload:
+    properties:
+      current_password:
+        description: The current password of the user.
+        example: password
+        maximum: 120
+        minimum: 4
+        type: string
+        x-go-name: CurrentPassword
+      new_password:
+        description: The new password for the user.
+        example: new_password
+        maximum: 120
+        minimum: 4
+        type: string
+        x-go-name: NewPassword
+    required:
+    - current_password
+    - new_password
+    type: object
+    x-go-package: group-management-api/domain/payload
+  CreateGroupPayload:
+    properties:
+      name:
+        description: Name of the group.
+        example: regional managers
+        maximum: 40
+        minimum: 3
+        type: string
+        x-go-name: Name
+    required:
+    - name
+    type: object
+    x-go-package: group-management-api/domain/payload
+  CredentialsUserPayload:
+    properties:
+      email:
+        description: Email of the user.
+        example: dwight.schrute@dunder-mifflin.com
+        type: string
+        x-go-name: Email
+      password:
+        description: Password for the user with email.
+        example: password
+        maximum: 120
+        minimum: 4
+        type: string
+        x-go-name: Password
+    required:
+    - email
+    - password
+    type: object
+    x-go-package: group-management-api/domain/payload
+  Entity:
+    properties:
+      created_at:
+        description: when it was created
+        example: "2021-02-05T16:12:21.385747Z"
+        format: date-time
+        type: string
+        x-go-name: CreatedAt
+      updated_at:
+        description: last time it was updated
+        example: "2021-03-05T16:12:21.385747Z"
+        format: date-time
+        type: string
+        x-go-name: UpdatedAt
+    type: object
+    x-go-package: group-management-api/domain/model
+  EntityID:
+    format: int64
+    type: integer
+    x-go-package: group-management-api/domain/model
+  ErrorResponse:
+    description: Error Response
+    properties:
+      err:
+        description: the description of this error
+        example: ErrNotFound
+        minimum: 1
+        type: string
+        x-go-name: ErrorString
+    required:
+    - err
+    type: object
+    x-go-package: group-management-api/adapter/restapi
+  Group:
+    allOf:
+    - $ref: '#/definitions/Entity'
+    - properties:
+        id:
+          $ref: '#/definitions/GroupID'
+        name:
+          description: group name
+          example: assistants to the regional managers
+          minimum: 3
+          type: string
+          x-go-name: Name
+        users:
+          description: members of the group
+          example: []
+          items:
+            $ref: '#/definitions/User'
+          type: array
+          x-go-name: Members
+      required:
+      - id
+      - name
+      type: object
+    description: Group model
+    x-go-package: group-management-api/domain/model
+  GroupID:
+    $ref: '#/definitions/EntityID'
+  JoinGroup:
+    properties:
+      group_id:
+        $ref: '#/definitions/GroupID'
+    required:
+    - group_id
+    type: object
+    x-go-package: group-management-api/domain/payload
+  LoginResponse:
+    description: Login Response
+    properties:
+      token:
+        description: the jwt authentication token.
+        example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJzdGFuZGFyZF9jbGFpbXMiOnsiZXhwIjoxNjEyNTc3NTQxLCJqdGkiOiIxIiwiaWF0IjoxNjEyNTQxNTQxLCJpc3MiOiJHcm91cE1hbmFnZW1lbnRBcHAifX0.skb_BHRkLz86btb9JG20Xu7p9zDUhbqBLoZHIdM2PV0
+        type: string
+        x-go-name: Token
+    type: object
+    x-go-package: group-management-api/adapter/restapi
+  ModifyGroupPayload:
+    properties:
+      name:
+        description: Used to change the groups name.
+        example: assistants to the regional manager
+        maximum: 40
+        minimum: 3
+        type: string
+        x-go-name: Name
+    required:
+    - name
+    type: object
+    x-go-package: group-management-api/domain/payload
+  ModifyUserPayload:
+    properties:
+      email:
+        description: Used for changing the users email.
+        example: michael.scott@dunder-mifflin.com
+        type: string
+        x-go-name: Email
+      name:
+        description: Used for changing the users name.
+        example: Michael Scott
+        maximum: 40
+        minimum: 3
+        type: string
+        x-go-name: Name
+    required:
+    - email
+    type: object
+    x-go-package: group-management-api/domain/payload
+  RegisterResponse:
+    description: Register Response
+    properties:
+      token:
+        description: the jwt authentication token.
+        example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJzdGFuZGFyZF9jbGFpbXMiOnsiZXhwIjoxNjEyNTc3NTQxLCJqdGkiOiIxIiwiaWF0IjoxNjEyNTQxNTQxLCJpc3MiOiJHcm91cE1hbmFnZW1lbnRBcHAifX0.skb_BHRkLz86btb9JG20Xu7p9zDUhbqBLoZHIdM2PV0
+        type: string
+        x-go-name: Token
+      user:
+        $ref: '#/definitions/User'
+    type: object
+    x-go-package: group-management-api/adapter/restapi
+  RegisterUserPayload:
+    properties:
+      email:
+        description: Email used to login the user.
+        example: dwight.schrute@dunder-mifflin.com
+        type: string
+        x-go-name: Email
+      name:
+        description: User name.
+        example: Dwight Schrute
+        maximum: 40
+        minimum: 3
+        type: string
+        x-go-name: Name
+      password:
+        description: Users passwords.
+        example: password
+        maximum: 120
+        minimum: 4
+        type: string
+        x-go-name: Password
+    required:
+    - email
+    - password
+    type: object
+    x-go-package: group-management-api/domain/payload
+  UnregisterUserPayload:
+    properties:
+      password:
+        description: The current users password.
+        example: password
+        maximum: 120
+        minimum: 4
+        type: string
+        x-go-name: Password
+    required:
+    - password
+    type: object
+    x-go-package: group-management-api/domain/payload
+  User:
+    allOf:
+    - $ref: '#/definitions/Entity'
+    - properties:
+        email:
+          description: email of the user
+          example: dwight.schrute@gmail.com
+          format: email
+          type: string
+          x-go-name: Email
+        group:
+          $ref: '#/definitions/Group'
+        id:
+          $ref: '#/definitions/UserID'
+        name:
+          description: name of the user
+          example: Dwight Schrute
+          maximum: 40
+          minimum: 3
+          type: string
+          x-go-name: Name
+      required:
+      - id
+      - email
+      type: object
+    description: User model
+    x-go-package: group-management-api/domain/model
+  UserID:
+    $ref: '#/definitions/EntityID'
+host: localhost:3000
+info:
+  contact:
+    email: miha.markez@gmail.com
+    name: Miha Markež
+  title: Rest Api for Group Management.
+  version: 1.0.0
+paths:
+  /groups:
+    get:
+      operationId: getGroups
+      responses:
+        "200":
+          description: Groups array.
+          schema:
+            items:
+              $ref: '#/definitions/Group'
+            type: array
+      summary: Gets all the groups.
+      tags:
+      - groups
+    post:
+      operationId: createGroup
+      parameters:
+      - in: body
+        name: CreateGroupPayload
+        schema:
+          $ref: '#/definitions/CreateGroupPayload'
+      responses:
+        "201":
+          description: The created group.
+          schema:
+            $ref: '#/definitions/Group'
+        "400":
+          description: Invalid payload fields or name already taken.
+      summary: Creates a group with a name, it that is not already taken.
+      tags:
+      - groups
+  /groups/{group_id}:
+    delete:
+      operationId: deleteGroup
+      parameters:
+      - description: A specific group denoted by the group_id.
+        format: int64
+        in: path
+        minimum: 1
+        name: group_id
+        required: true
+        type: integer
+        x-go-name: GroupID
+      responses:
+        "204":
+          description: Successful delete.
+      summary: Delete the group denoted by group_id.
+      tags:
+      - groups
+    get:
+      operationId: getGroup
+      parameters:
+      - description: A specific group denoted by the group_id.
+        format: int64
+        in: path
+        minimum: 1
+        name: group_id
+        required: true
+        type: integer
+        x-go-name: GroupID
+      responses:
+        "200":
+          description: Group denoted by group_id.
+          schema:
+            $ref: '#/definitions/Group'
+        "404":
+          description: Group not found.
+      summary: Get a group which is denoted by group_id.
+      tags:
+      - groups
+    patch:
+      description: If the name is taken it will return a bad request error with explanation.
+      operationId: modifyGroup
+      parameters:
+      - description: A specific group denoted by the group_id.
+        format: int64
+        in: path
+        minimum: 1
+        name: group_id
+        required: true
+        type: integer
+        x-go-name: GroupID
+      - in: body
+        name: Payload
+        schema:
+          $ref: '#/definitions/ModifyGroupPayload'
+      responses:
+        "200":
+          description: Group with newly modified fields.
+          schema:
+            $ref: '#/definitions/Group'
+        "404":
+          description: Group not found.
+      summary: Change the group name.
+      tags:
+      - groups
+  /groups/{group_id}/users:
+    get:
+      operationId: getMembersOfGroup
+      parameters:
+      - description: A specific group denoted by the group_id.
+        format: int64
+        in: path
+        minimum: 1
+        name: group_id
+        required: true
+        type: integer
+        x-go-name: GroupID
+      responses:
+        "200":
+          description: Members of a the group.
+          schema:
+            items:
+              $ref: '#/definitions/User'
+            type: array
+        "404":
+          description: Group not found.
+      summary: Gets all the members of a group denoted by group_id.
+      tags:
+      - groups
+      - users
+  /login:
+    post:
+      description: Returns a Bearer token, if the credentials are correct.
+      operationId: loginUser
+      parameters:
+      - in: body
+        name: CredentialsUserPayload
+        schema:
+          $ref: '#/definitions/CredentialsUserPayload'
+      responses:
+        "200":
+          description: User token used for authentication.
+          schema:
+            $ref: '#/definitions/LoginResponse'
+        "400":
+          description: Invalid credentials error.
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+      summary: Log in the user with email and password.
+      tags:
+      - auth
+  /users:
+    get:
+      operationId: getUsers
+      responses:
+        "200":
+          description: Users array.
+          schema:
+            items:
+              $ref: '#/definitions/User'
+            type: array
+      summary: Gets all the users.
+      tags:
+      - users
+    post:
+      description: The email has to be unique amongst the already registered members.
+      operationId: registerUser
+      parameters:
+      - in: body
+        name: RegisterUserPayload
+        schema:
+          $ref: '#/definitions/RegisterUserPayload'
+      responses:
+        "201":
+          description: The newly created User with an access token.
+          schema:
+            $ref: '#/definitions/RegisterResponse'
+        "400":
+          description: Invalid payload fields and email already taken error.
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+      summary: Register an user with email, name and password.
+      tags:
+      - auth
+      - users
+  /users/{user_id}:
+    get:
+      operationId: getUser
+      parameters:
+      - description: A specific user denoted by the user_id.
+        format: int64
+        in: path
+        minimum: 1
+        name: user_id
+        required: true
+        type: integer
+        x-go-name: UserID
+      responses:
+        "200":
+          description: User denoted by user_id.
+          schema:
+            $ref: '#/definitions/User'
+        "404":
+          description: User with not found.
+      summary: Get the user which is denoted by user_id.
+      tags:
+      - users
+  /users/current:
+    delete:
+      description: Supply the api with email and current password, so that that the
+        user confirms his choice.
+      operationId: unregisterCurrentUser
+      parameters:
+      - in: body
+        name: UnregisterUserPayload
+        schema:
+          $ref: '#/definitions/UnregisterUserPayload'
+      responses:
+        "204":
+          description: User unregistered.
+        "400":
+          description: Invalid credentials.
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        "401":
+          description: Authentication error.
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+      security:
+      - bearer_auth: []
+      summary: Unregister the user that is denoted from the Bearer token.
+      tags:
+      - current_user
+      - auth
+    get:
+      description: Basically a user profile fetcher.
+      operationId: getSignedInUser
+      responses:
+        "200":
+          description: The currently logged in user.
+          schema:
+            $ref: '#/definitions/User'
+        "401":
+          description: Authentication error.
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+      security:
+      - bearer_auth: []
+      summary: Get the currently logged in user from Bearer token.
+      tags:
+      - current_user
+    patch:
+      description: The email has to be unique amongst the already registered users.
+        At least one of these parameters have to be supplied.
+      operationId: modifyCurrentUser
+      parameters:
+      - in: body
+        name: ModifyUserPayload
+        schema:
+          $ref: '#/definitions/ModifyUserPayload'
+      responses:
+        "200":
+          description: User with updated fields.
+          schema:
+            $ref: '#/definitions/User'
+        "400":
+          description: Invalid payload fields and email already taken error.
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        "401":
+          description: Authentication error.
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+      security:
+      - bearer_auth: []
+      summary: Modify user details, which are email and the name.
+      tags:
+      - current_user
+  /users/current/attributes/password:
+    put:
+      description: The user has to send the current password along the new password
+        for security reasons.
+      operationId: changeCurrentUserPassword
+      parameters:
+      - in: body
+        name: ChangePasswordPayload
+        schema:
+          $ref: '#/definitions/ChangePasswordPayload'
+      responses:
+        "200":
+          description: Successful password change.
+          schema:
+            $ref: '#/definitions/User'
+        "400":
+          description: Invalid credentials.
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        "401":
+          description: Authentication error.
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+      security:
+      - bearer_auth: []
+      summary: Change the current users password.
+      tags:
+      - current_user
+  /users/current/group:
+    delete:
+      description: In any instance the API returns a successful delete response.
+      operationId: leaveGroup
+      responses:
+        "204":
+          description: Successful leave group.
+        "401":
+          description: Authentication error.
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+      security:
+      - bearer_auth: []
+      summary: Leave the current group.
+      tags:
+      - current_user
+    get:
+      operationId: getCurrentUserGroup
+      responses:
+        "200":
+          description: The current user group.
+          schema:
+            $ref: '#/definitions/Group'
+        "401":
+          description: Authentication error.
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        "404":
+          description: User doesn't have an assigned group.
+      security:
+      - bearer_auth: []
+      summary: Get the group from the currently logged in user.
+      tags:
+      - current_user
+    post:
+      description: The group should exist and the user should not be in a group already.
+        If these circumstances are not respected an error will be returned.
+      operationId: joinGroup
+      parameters:
+      - in: body
+        name: JoinGroupPayload
+        schema:
+          $ref: '#/definitions/JoinGroup'
+      responses:
+        "201":
+          description: The joined group.
+          schema:
+            $ref: '#/definitions/Group'
+        "400":
+          description: Already in group or group not found error.
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        "401":
+          description: Authentication error.
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+      security:
+      - bearer_auth: []
+      summary: Join a group denoted by group_id.
+      tags:
+      - current_user
+produces:
+- application/json
+schemes:
+- http
+securityDefinitions:
+  bearer_auth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
