@@ -144,7 +144,7 @@ func (s *Server) setupEndpoints(r *chi.Mux) {
 					// Get the group from the currently logged in user.
 					//
 					// Responses:
-					//   200: Group Current users group.
+					//   200: Group The current user group.
 					//   401: ErrorResponse Authentication error.
 					//   404: description:User doesn't have an assigned group.
 					//
