@@ -45,6 +45,7 @@ type AppConfig struct {
 	AdapterConfig struct {
 		// Chosen Adapter Implementation Selection.
 		Impl impl.AdapterImpl `env:"Adapter.Impl"`
+
 		// Adapter Implementations.
 		RestConfig struct {
 			// Used for singing our tokens.
