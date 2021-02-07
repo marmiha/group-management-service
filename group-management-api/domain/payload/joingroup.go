@@ -5,7 +5,14 @@ import (
 	"group-management-api/domain/model"
 )
 
+// swagger:model JoinGroup
 type JoinGroup struct {
+
+	// ID of the group to join
+	//
+	// required: true
+	// minimum: 1
+	// example: 1
 	GroupID model.GroupID `json:"group_id"`
 }
 

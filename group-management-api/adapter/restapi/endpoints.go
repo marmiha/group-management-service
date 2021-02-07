@@ -56,7 +56,7 @@ func (s *Server) setupEndpoints(r *chi.Mux) {
 				r.Use(s.WithUserAuthenticationCtx)
 
 				// GET for getting current user.
-				// swagger:route GET /users/current users currentUser getSignedInUser
+				// swagger:route GET /users/current current_user getSignedInUser
 				//
 				// Get the currently logged in user from Bearer token.
 				//
@@ -72,7 +72,7 @@ func (s *Server) setupEndpoints(r *chi.Mux) {
 				r.Get("/", s.getCurrentUser)
 
 				// PATCH for updating user information.
-				// swagger:route PATCH /users/current users current_user modifyCurrentUser
+				// swagger:route PATCH /users/current current_user modifyCurrentUser
 				//
 				// Modify user details, which are email and the name.
 				//
@@ -89,7 +89,7 @@ func (s *Server) setupEndpoints(r *chi.Mux) {
 				r.Patch("/", s.modifyUser)
 
 				// DELETE for unregistering.
-				// swagger:route DELETE /users/current users current_user unregisterCurrentUser
+				// swagger:route DELETE /users/current current_user auth unregisterCurrentUser
 				//
 				// Unregister the user that is denoted from the Bearer token.
 				//
@@ -105,6 +105,33 @@ func (s *Server) setupEndpoints(r *chi.Mux) {
 				//
 				r.Delete("/", s.unregisterUser)
 
+				// Routes for current user attributes.
+				r.Route("/attributes", func(r chi.Router) {
+					// For specific user attributes, currently only password is kinda viable for this.
+					// Modifying user email and name is done with PATCH users/current
+
+					r.Route("/password", func(r chi.Router) {
+
+						// PUT for changing the user password.
+						// swagger:route PUT /users/current/attributes/password current_user changeCurrentUserPassword
+						//
+						// Change the current users password.
+						//
+						// The user has to send the current password along the new password for security reasons.
+						//
+						// Responses:
+						//   200: User Successful password change.
+						//   400: ErrorResponse Invalid credentials.
+						//   401: ErrorResponse Authentication error.
+						//
+						// Security:
+						//   bearer_auth:
+						//
+						r.Put("/", s.changeUserPassword)
+					})
+
+				})
+
 				// Routes for current user group.
 				r.Route("/group", func(r chi.Router) {
 
@@ -112,7 +139,7 @@ func (s *Server) setupEndpoints(r *chi.Mux) {
 					r.Use(s.CurrentUserGroupCtx)
 
 					// GET for fetching the current group.
-					// swagger:route GET /users/current/group users current_user groups getCurrentUserGroup
+					// swagger:route GET /users/current/group current_user getCurrentUserGroup
 					//
 					// Get the group from the currently logged in user.
 					//
@@ -127,7 +154,7 @@ func (s *Server) setupEndpoints(r *chi.Mux) {
 					r.Get("/", s.getGroup)
 
 					// POST for joining a group.
-					// swagger:route POST /users/current/group users current_user groups joinGroup
+					// swagger:route POST /users/current/group current_user joinGroup
 					//
 					// Join a group denoted by group_id.
 					//
@@ -144,7 +171,7 @@ func (s *Server) setupEndpoints(r *chi.Mux) {
 					r.Post("/", s.joinGroup)
 
 					// DELETE for leaving the current group.
-					// swagger:route DELETE /users/current/group users current_user groups leaveGroup
+					// swagger:route DELETE /users/current/group current_user leaveGroup
 					//
 					// Leave the current group.
 					//

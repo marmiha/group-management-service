@@ -5,7 +5,15 @@ import (
 	"group-management-api/domain/model"
 )
 
+// swagger:model ModifyGroupPayload
 type ModifyGroupPayload struct {
+
+	// Used to change the groups name.
+	//
+	// minimum: 3
+	// maximum: 40
+	// required: true
+	// example: assistants to the regional manager
 	Name string `json:"name"`
 }
 

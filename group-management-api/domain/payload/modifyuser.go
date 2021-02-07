@@ -5,8 +5,20 @@ import (
 	"group-management-api/domain/model"
 )
 
+// swagger:model ModifyUser Payload
 type ModifyUserPayload struct {
-	Name  string `json:"name"`
+
+	// Used for changing the users name.
+	//
+	// minimum: 3
+	// maximum: 40
+	// example: Michael Scott
+	Name string `json:"name"`
+
+	// Used for changing the users email.
+	//
+	// required: true
+	// example: michael.scott@dunder-mifflin.com
 	Email string `json:"email"`
 }
 

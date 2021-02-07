@@ -3,6 +3,7 @@ package model
 import validation "github.com/go-ozzo/ozzo-validation/v4"
 
 // swagger:model UserID
+// example: 1
 type UserID EntityID
 
 // User model
@@ -14,22 +15,25 @@ type User struct {
 
 	// id of user
 	//
+	// minimum: 1
 	// required: true
-	// example: 42
-	ID           UserID `json:"id"`
+	// example: 1
+	ID UserID `json:"id"`
 
 	// email of the user
 	//
 	// required: true
 	// example: dwight.schrute@gmail.com
 	// swagger:strfmt email
-	Email        string `json:"email"`
+	Email string `json:"email"`
 
 	// name of the user
 	//
+	// minimum: 3
+	// maximum: 40
 	// required: false
 	// example: Dwight Schrute
-	Name         string `json:"name"`
+	Name string `json:"name"`
 
 	// hash representation of password
 	//
@@ -40,7 +44,7 @@ type User struct {
 	// the group that the user is in
 	//
 	// required: false
-	Group        *Group  `json:"group,omitempty"`
+	Group *Group `json:"group,omitempty"`
 }
 
 func (u User) Validate() error {

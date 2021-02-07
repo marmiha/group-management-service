@@ -22,6 +22,24 @@ func (s *Server) getUser(writer http.ResponseWriter, request *http.Request) {
 	okResponse(writer, user)
 }
 
+func (s *Server) changeUserPassword(writer http.ResponseWriter, request *http.Request) {
+	var p payload.ChangePasswordPayload
+
+	next := validatePayload(func(writer http.ResponseWriter, request *http.Request) {
+		user := currentUserFromCtx(request)
+
+		user, err := s.UserRegistration.ChangePassword(user.ID, p)
+		if err != nil {
+			badRequestResponse(writer, err)
+			return
+		}
+
+		okResponse(writer, user)
+	}, &p)
+
+	next.ServeHTTP(writer, request)
+}
+
 func (s *Server) registerUser(writer http.ResponseWriter, request *http.Request) {
 	var p payload.RegisterUserPayload
 

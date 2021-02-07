@@ -5,7 +5,14 @@ import (
 	"group-management-api/domain/model"
 )
 
+// swagger:model UnregisterUserPayload
 type UnregisterUserPayload struct {
+	// The current users password.
+	//
+	// required: true
+	// minimum: 4
+	// maximum: 120
+	// example: password
 	Password string `json:"password"`
 }
 

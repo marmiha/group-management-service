@@ -7,10 +7,12 @@ import (
 
 // Model fields constraints. These are also used for payload verification.
 var (
-	GroupNameMinLength    = 2
-	GroupNameMaxLength    = 10
+	GroupNameMinLength    = 3
+	GroupNameMaxLength    = 40
+
 	UserNameMinLength     = 3
-	UserNameMaxLength     = 12
+	UserNameMaxLength     = 40
+
 	UserPasswordMinLength = 4
 	UserPasswordMaxLength = 120
 )
@@ -18,7 +20,7 @@ var (
 /* Custom common rules for payload and entities fields verification. */
 
 var GroupNameRule = []validation.Rule{
-	validation.Required,
+	is.LowerCase,
 	validation.Length(GroupNameMinLength, GroupNameMaxLength),
 }
 var GroupNameRequiredRule = append(GroupNameRule, validation.Required)
@@ -30,6 +32,7 @@ var UserNameRequiredRule = append(UserNameRule, validation.Required)
 
 var UserEmailRule = []validation.Rule{
 	// Change this to is.Email if you want to check MX records for domain validation.
+	is.LowerCase,
 	is.EmailFormat,
 }
 var UserEmailRequiredRule = append(UserEmailRule, validation.Required)

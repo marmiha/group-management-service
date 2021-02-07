@@ -5,9 +5,23 @@ import (
 	"group-management-api/domain/model"
 )
 
+// swagger:model ChangePasswordPayload
 type ChangePasswordPayload struct {
+	// The current password of the user.
+	//
+	// required: true
+	// minimum: 4
+	// maximum: 120
+	// example: password
 	CurrentPassword string `json:"current_password"`
-	NewPassword     string `json:"new_password"`
+
+	// The new password for the user.
+	//
+	// required: true
+	// minimum: 4
+	// maximum: 120
+	// example: new_password
+	NewPassword string `json:"new_password"`
 }
 
 func (cpp ChangePasswordPayload) Validate() error {

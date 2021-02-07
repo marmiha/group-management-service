@@ -5,9 +5,28 @@ import (
 	"group-management-api/domain/model"
 )
 
+// swagger:model RegisterUserPayload
 type RegisterUserPayload struct {
-	Email    string `json:"email"`
-	Name     string `json:"name"`
+
+	// Email used to login the user.
+	//
+	// required: true
+	// example: dwight.schrute@dunder-mifflin.com
+	Email string `json:"email"`
+
+	// User name.
+	//
+	// minimum: 3
+	// maximum: 40
+	// example: Dwight Schrute
+	Name string `json:"name"`
+
+	// Users passwords.
+	//
+	// required: true
+	// minimum: 4
+	// maximum: 120
+	// example: password
 	Password string `json:"password"`
 }
 

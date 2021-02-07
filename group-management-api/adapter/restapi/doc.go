@@ -3,7 +3,7 @@
 // Schemes: http
 // Host: localhost:3001
 // BasePath: api/v1
-// Version: 0.0.1
+// Version: 1.0.0
 // Contact: miha.markez@gmail.com
 // License: MIT http://opensource.org/licenses/MIT
 //

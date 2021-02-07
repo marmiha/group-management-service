@@ -5,7 +5,15 @@ import (
 	"group-management-api/domain/model"
 )
 
+// swagger:model CreateGroupPayload
 type CreateGroupPayload struct {
+
+	// Name of the group.
+	//
+	// required: true
+	// minimum: 3
+	// maximum: 40
+	// example: regional managers
 	Name string `json:"name"`
 }
 
