@@ -7,6 +7,8 @@ type GroupID EntityID
 
 // swagger:model Group
 type Group struct {
+
+	// swagger:allOf
 	Entity
 
 	// id of the group

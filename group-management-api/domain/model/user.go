@@ -9,6 +9,7 @@ type UserID EntityID
 // swagger:model User
 type User struct {
 
+	// swagger:allOf
 	Entity
 
 	// id of user
