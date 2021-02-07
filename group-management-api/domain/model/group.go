@@ -25,7 +25,7 @@ type Group struct {
 	// required: true
 	// minimum: 3
 	// minimum: 40
-	// example: admins
+	// example: assistants to the regional managers
 	Name string `json:"name"`
 
 	// members of the group
