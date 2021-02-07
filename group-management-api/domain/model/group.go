@@ -5,6 +5,7 @@ import validation "github.com/go-ozzo/ozzo-validation/v4"
 // swagger:model GroupID
 type GroupID EntityID
 
+// Group model
 // swagger:model Group
 type Group struct {
 

@@ -5,7 +5,7 @@ import validation "github.com/go-ozzo/ozzo-validation/v4"
 // swagger:model UserID
 type UserID EntityID
 
-// User model which the domain uses.
+// User model
 // swagger:model User
 type User struct {
 
@@ -22,6 +22,7 @@ type User struct {
 	//
 	// required: true
 	// example: dwight.schrute@gmail.com
+	// swagger:strfmt email
 	Email        string `json:"email"`
 
 	// name of the user

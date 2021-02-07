@@ -7,7 +7,6 @@ import "time"
 // example: 1
 type EntityID int64
 
-// This is a common struct field amongst models that need to be persisted.
 // swagger:model Entity
 type Entity struct {
 

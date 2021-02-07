@@ -2,7 +2,7 @@ package restapi
 
 import "group-management-api/domain/model"
 
-// Generic error response struct.
+// Error Response
 // swagger:model ErrorResponse
 type ErrorResponse struct {
 	// the description of this error
@@ -13,7 +13,7 @@ type ErrorResponse struct {
 	ErrorString string `json:"err"`
 }
 
-// Response upon successful registering request.
+// Register Response
 // swagger:model RegisterResponse
 type RegisterResponse struct {
 	User  model.User `json:"user"`
@@ -24,7 +24,7 @@ type RegisterResponse struct {
 	Token string     `json:"token"`
 }
 
-// Response upon successful login request.
+// Login Response
 // swagger:model LoginResponse
 type LoginResponse struct {
 	// the jwt authentication token.
