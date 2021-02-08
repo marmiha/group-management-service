@@ -19,7 +19,7 @@ services:
       - Adapter.Impl=rest
       - Adapter.Rest.JwtKey=defaultjwtkey
     ports:
-    - ${ApiPort:-3000}:${ExposedPort-3000}
+    - ${ExposedPort:-3000}:${ExposedPort-3000}
     networks:
       - group-management
   postgres-data:

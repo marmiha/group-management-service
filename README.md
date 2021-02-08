@@ -28,3 +28,8 @@ needs the JwtKey for signing the Bearer tokens in part of authentication.
 Run the following commands:
 1) `docker-compose build`
 2) `docker-compose up`
+
+### REST API and OpenAPI specification
+
+After start up the application REST API endpoints will be accessible on `host:<ExposedPort>/api/v1/...` while the OpenAPI specification of these are 
+described in `swagger.yml` accessible at `host:<ExposedPort>/specs/swagger.yml`.
