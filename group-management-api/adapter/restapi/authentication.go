@@ -5,7 +5,6 @@ import (
 	jwtRequest "github.com/dgrijalva/jwt-go/request"
 	"group-management-api/domain/model"
 	"net/http"
-	"os"
 	"strconv"
 	"strings"
 	"time"
@@ -29,15 +28,15 @@ var AuthenticationHeaderExtractorFilter = jwtRequest.PostExtractionFilter{
 		return tokenString, nil
 	}}
 
-func ParseToken(r *http.Request, tokenClaims *TokenClaims) (*jwt.Token, error) {
+func (s *Server) ParseToken(r *http.Request, tokenClaims *TokenClaims) (*jwt.Token, error) {
 	token, err := jwtRequest.ParseFromRequest(r, &AuthenticationHeaderExtractorFilter, func(token *jwt.Token) (interface{}, error) {
-		key := []byte(os.Getenv("JWT_KEY"))
+		key := []byte(s.JwtSecret)
 		return key, nil
 	}, jwtRequest.WithClaims(tokenClaims))
 	return token, err
 }
 
-func GenerateToken(userID model.UserID) (*string, error) {
+func  (s *Server)  GenerateToken(userID model.UserID) (*string, error) {
 	// The tokens will expire in one day. Unix function converts the
 	// date to the seconds passed so int64.
 	expiresAt := time.Now().Add(time.Hour * 10)
@@ -55,7 +54,7 @@ func GenerateToken(userID model.UserID) (*string, error) {
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	// Sign the token with the JWT_KEY environment variable.
-	key := []byte(os.Getenv("JWT_KEY"))
+	key := []byte(s.JwtSecret)
 	signedString, err := token.SignedString(key)
 
 	if err != nil {

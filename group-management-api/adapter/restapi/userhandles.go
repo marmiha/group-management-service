@@ -51,7 +51,7 @@ func (s *Server) registerUser(writer http.ResponseWriter, request *http.Request)
 			return
 		}
 
-		token, err := GenerateToken(user.ID)
+		token, err := s.GenerateToken(user.ID)
 		if err != nil {
 			badRequestResponse(writer, err)
 			return
@@ -115,7 +115,7 @@ func (s *Server) loginUser(writer http.ResponseWriter, request *http.Request) {
 			return
 		}
 
-		token, err := GenerateToken(user.ID)
+		token, err := s.GenerateToken(user.ID)
 		if err != nil {
 			badRequestResponse(writer, err)
 			return

@@ -15,7 +15,7 @@ func (s *Server) WithUserAuthenticationCtx(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// This is where we check for our token and save it inside our context.
 		var tokenClaims TokenClaims
-		_, err := ParseToken(r, &tokenClaims)
+		_, err := s.ParseToken(r, &tokenClaims)
 
 		// If signature is invalid or the token does not exist.
 		if err != nil {

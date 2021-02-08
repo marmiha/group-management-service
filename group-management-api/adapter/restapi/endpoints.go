@@ -1,10 +1,14 @@
 package restapi
 
-import "github.com/go-chi/chi"
+import (
+	"github.com/go-chi/chi"
+)
 
 func (s *Server) setupEndpoints(r *chi.Mux) {
-	r.Route("/api/v1", func(r chi.Router) {
 
+	FileServer(r)
+
+	r.Route("/api/v1", func(r chi.Router) {
 		// For logging the user in.
 		r.Route("/login", func(r chi.Router) {
 
