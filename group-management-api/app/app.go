@@ -2,6 +2,7 @@
 package app
 
 import (
+	"errors"
 	"github.com/joeshaw/envdecode"
 	"github.com/sirupsen/logrus"
 	"group-management-api/app/config"
@@ -11,33 +12,41 @@ import (
 	"group-management-api/app/logger"
 )
 
-func InitApp() *container.Container{
+func InitApp() (*container.Container, error){
 	// Read configurations from environment.
-	cfg := InitConfig()
+	cfg, err := initConfig()
+	if err != nil {
+		return nil, err
+	}
 	// New application container.
 	c := container.New(cfg)
 	// Logger initialization.
-	InitLogger(c)
-	err := factory.InitAdapter(c)
-	if err != nil {
-		logger.Log.WithField("err", err).Fatal("Something went wrong initializing the application.")
+	if err = initLogger(c); err != nil {
+		return nil, err
 	}
-	return c
+
+	// Adapter initialization. This is the top most layer.
+	if err = factory.InitAdapter(c); err != nil {
+		return nil, err
+	}
+
+	return c, nil
 }
 
-func InitConfig() *config.AppConfig{
+func initConfig() (*config.AppConfig, error){
 	cfg := config.AppConfig{}
 
 	if err := envdecode.Decode(&cfg); err != nil {
 		logger.Log.
 			WithField("err", err).
-			Fatal("Unable decode environment variables into struct.")
+			Info("Unable decode environment variables into struct.")
+		return nil, err
 	}
 
-	return &cfg
+	return &cfg, nil
 }
 
-func InitLogger(c *container.Container) {
+func initLogger(c *container.Container) error {
 	// Shut down all shutdownables when calling Log.Fatal().
 	logrus.RegisterExitHandler(func() {
 		c.ShutdownAll()
@@ -62,7 +71,7 @@ func InitLogger(c *container.Container) {
 	case impl.PanicLevel:
 		logrusLevel = logrus.PanicLevel
 	default:
-		logger.Log.WithField("LogLevel", logLevel).Fatal("Unknown logging level in config")
+		return errors.New("Unknown logging level in config " + string(logLevel))
 	}
 
 	// Set the logging level provided.
@@ -70,4 +79,5 @@ func InitLogger(c *container.Container) {
 	logger.Log.WithFields(logrus.Fields{
 		"LogLevel": logLevel,
 	}).Info("Initialized Logrus Logger")
+	return nil
 }

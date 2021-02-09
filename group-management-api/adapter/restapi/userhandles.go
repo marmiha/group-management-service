@@ -125,7 +125,7 @@ func (s *Server) loginUser(writer http.ResponseWriter, request *http.Request) {
 			Token: *token,
 		}
 
-		createdResponse(writer, response)
+		okResponse(writer, response)
 	}, &p)
 
 	next.ServeHTTP(writer, request)

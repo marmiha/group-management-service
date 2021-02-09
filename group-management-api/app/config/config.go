@@ -50,6 +50,7 @@ type AppConfig struct {
 		RestConfig struct {
 			// Used for singing our tokens.
 			JwtKey string `env:"Adapter.Rest.JwtKey"`
+			EnableLogging bool `env:"Adapter.Rest.EnableLogging"`
 		}
 	}
 }

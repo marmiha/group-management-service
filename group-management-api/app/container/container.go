@@ -2,6 +2,7 @@
 package container
 
 import (
+	"errors"
 	"group-management-api/app/config"
 	"group-management-api/app/logger"
 	"os"
@@ -12,6 +13,7 @@ import (
 // Handles all the things that need to be shut down.
 type Container struct {
 	Startable Startable
+	Adapter interface{}
 	AppConfig *config.AppConfig
 	Shutdownables []Shutdownable
 }
@@ -36,10 +38,9 @@ func (c Container) ShutdownAll() {
 	}
 	logger.Log.Info("... completed.")
 }
-func (c *Container) StartApp() {
+func (c *Container) StartApp() error{
 	if c.Startable == nil {
-		logger.Log.Info("Nothing was started :,(. Something was not configured right.")
-		return
+		return errors.New("startable is not set, there is no entry point")
 	}
 
 	// In case of SIG-TERM we will be notified.
@@ -53,6 +54,7 @@ func (c *Container) StartApp() {
 	}()
 
 	c.Startable()
+	return nil
 }
 
 func (c Container) AddShutdownable(s Shutdownable) {

@@ -18,6 +18,7 @@ services:
       - DataService.Postgres.DropTableOnConn=true
       - Adapter.Impl=rest
       - Adapter.Rest.JwtKey=defaultjwtkey
+      - Adapter.Rest.EnableLogging=true
     ports:
     - ${ExposedPort:-3000}:${ExposedPort-3000}
     networks:

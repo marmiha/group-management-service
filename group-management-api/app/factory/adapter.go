@@ -36,7 +36,7 @@ func InitAdapter(c *container.Container) error {
 func restAdapterSetup(c *container.Container) error {
 	router := chi.NewRouter()
 	// Default router middleware.
-	setupDefaultRouterMiddleware(router)
+	setupDefaultRouterMiddleware(router, c)
 
 	lg, err := GetListGroupUseCase(c)
 	if err != nil {
@@ -94,11 +94,15 @@ func restAdapterSetup(c *container.Container) error {
 			log.Fatalf("Can not start server %v", err)
 		}
 	}
+
+	// Used for testing.
+	c.Adapter = router
+
 	return nil
 }
 
 // Default middleware. Could call a different middleware setup function based on config parameters.
-func setupDefaultRouterMiddleware(router *chi.Mux) {
+func setupDefaultRouterMiddleware(router *chi.Mux, c *container.Container) {
 	// CORS Options.
 	corsOptions := cors.New(cors.Options{
 		AllowedOrigins:   []string{"*"},
@@ -112,7 +116,11 @@ func setupDefaultRouterMiddleware(router *chi.Mux) {
 	router.Use(middleware.RequestID)
 	router.Use(middleware.RealIP)
 	router.Use(middleware.Compress(6, "application/json"))
-	router.Use(middleware.Logger)
+
+	if c.AppConfig.AdapterConfig.RestConfig.EnableLogging {
+		router.Use(middleware.Logger)
+	}
+
 	router.Use(middleware.Recoverer)
 	router.Use(middleware.URLFormat)
 	router.Use(middleware.Timeout(60 * time.Second))
