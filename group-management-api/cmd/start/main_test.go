@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"github.com/go-chi/chi"
 	"group-management-api/app"
 	"group-management-api/app/config/impl"
@@ -216,7 +217,6 @@ func userCreationTest(t *testing.T) {
 				"err": domain.ErrUserWithEmailAlreadyExists.Error(),
 			}).
 			Build(),
-
 	}
 
 	runApiRestTestCases(tt, t)
@@ -388,12 +388,12 @@ func userModifyTest(t *testing.T) {
 			Patch().
 			WithAuth(userMain).
 			WithBody(payload.ModifyUserPayload{
-				Name: secondName,
+				Name:  secondName,
 				Email: secondEmail,
 			}).
 			ExpectCode(http.StatusOK).
 			ExpectBody(map[string]interface{}{
-				"name": secondName,
+				"name":  secondName,
 				"email": secondEmail,
 			}).
 			After(func() {
@@ -408,7 +408,7 @@ func userModifyTest(t *testing.T) {
 			WithAuth(userMain).
 			WithBody(payload.ChangePasswordPayload{
 				CurrentPassword: "wrong_password",
-				NewPassword: newPassword,
+				NewPassword:     newPassword,
 			}).
 			ExpectCode(http.StatusBadRequest).
 			ExpectBody(map[string]interface{}{
@@ -435,7 +435,7 @@ func userModifyTest(t *testing.T) {
 			WithAuth(userMain).
 			WithBody(payload.ChangePasswordPayload{
 				CurrentPassword: userMain.GetPassword(),
-				NewPassword: "f",
+				NewPassword:     "f",
 			}).
 			ExpectCode(http.StatusBadRequest).
 			ExpectBody(map[string]interface{}{
@@ -462,7 +462,7 @@ func userModifyTest(t *testing.T) {
 			WithAuth(userMain).
 			WithBody(payload.ChangePasswordPayload{
 				CurrentPassword: userMain.GetPassword(),
-				NewPassword: newPassword,
+				NewPassword:     newPassword,
 			}).
 			ExpectCode(http.StatusOK).
 			ExpectBody(map[string]interface{}{
@@ -505,6 +505,7 @@ var groupDelete = &Group{
 func GroupTests(t *testing.T) {
 	tt := []SubTest{
 		{"CreateGroup", groupCreationTest},
+		{"ModifyGroup", groupModifyTest},
 	}
 
 	for _, tc := range tt {
@@ -540,7 +541,7 @@ func groupCreationTest(t *testing.T) {
 			}).
 			ExpectCode(http.StatusCreated).
 			ExpectBody(map[string]interface{}{
-				"id": setIDgroup(groupMain),
+				"id":   setIDgroup(groupMain),
 				"name": groupMain.GetName(),
 			}).
 			Build(),
@@ -577,7 +578,7 @@ func groupCreationTest(t *testing.T) {
 			}).
 			ExpectCode(http.StatusCreated).
 			ExpectBody(map[string]interface{}{
-				"id": setIDgroup(groupDelete),
+				"id":   setIDgroup(groupDelete),
 				"name": groupDelete.GetName(),
 			}).
 			Build(),
@@ -591,6 +592,82 @@ func groupCreationTest(t *testing.T) {
 	runApiRestTestCases(tt, t)
 }
 
+func groupModifyTest(t *testing.T) {
+	newName := "new group name"
+
+	tt := []RestTestCase{
+		NewRestBuilder("NameCapsFails").
+			Path(fmt.Sprintf("/groups/%v", groupMain.GetID())).
+			Patch().
+			WithBody(payload.ModifyGroupPayload{
+				Name: "cApS",
+			}).
+			ExpectCode(http.StatusBadRequest).
+			ExpectBody(map[string]interface{}{
+				"err": isPresent,
+			}).
+			Build(),
+
+		NewRestBuilder("NameDidNotChange").
+			Path(fmt.Sprintf("/groups/%v", groupMain.GetID())).
+			Get().
+			ExpectCode(http.StatusOK).
+			ExpectBody(map[string]interface{}{
+				"id": float64(groupMain.ID),
+				"name": groupMain.GetName(),
+			}).
+			Build(),
+
+		NewRestBuilder("NameTakenFails").
+			Path(fmt.Sprintf("/groups/%v", groupMain.GetID())).
+			Patch().
+			WithBody(payload.ModifyGroupPayload{
+				Name: groupDelete.GetName(),
+			}).
+			ExpectCode(http.StatusBadRequest).
+			ExpectBody(map[string]interface{}{
+				"err": isPresent,
+			}).
+			Build(),
+
+		NewRestBuilder("NameTakenDidNotChange").
+			Path(fmt.Sprintf("/groups/%v", groupMain.GetID())).
+			Get().
+			ExpectCode(http.StatusOK).
+			ExpectBody(map[string]interface{}{
+				"id": float64(groupMain.ID),
+				"name": groupMain.GetName(),
+			}).
+			Build(),
+
+		NewRestBuilder("NotTakenAndCorrectNameSuccess").
+			Path(fmt.Sprintf("/groups/%v", groupMain.GetID())).
+			Patch().
+			WithBody(payload.ModifyGroupPayload{
+				Name: newName,
+			}).
+			ExpectCode(http.StatusOK).
+			ExpectBody(map[string]interface{}{
+				"id": float64(groupMain.ID),
+				"name": newName,
+			}).
+			After(func() {
+				groupMain.SetName(newName)
+			}).
+			Build(),
+
+		NewRestBuilder("NameDidChange").
+			Path(fmt.Sprintf("/groups/%v", groupMain.GetID())).
+			Get().
+			ExpectCode(http.StatusOK).
+			ExpectBody(map[string]interface{}{
+				"id": float64(groupMain.ID),
+				"name": newName,
+			}).
+			Build(),
+	}
+	runApiRestTestCases(tt, t)
+}
 func AuthorizationTests(t *testing.T) {
 
 }
@@ -642,7 +719,7 @@ func runApiRestTestCases(tc []RestTestCase, t *testing.T) {
 			}
 
 			// Callbacks based on success
-			if t.Failed()  {
+			if t.Failed() {
 				if tc.FFail != nil {
 					tc.FFail()
 				}
@@ -779,11 +856,11 @@ func saveAuthToken(u *User) func(interface{}) error {
 
 // Simple Group Struct for easier testing.
 type Group struct {
-	ID int
+	ID   int
 	Info payload.CreateGroupPayload
 }
 
-func (g *Group) GetID() int{
+func (g *Group) GetID() int {
 	return g.ID
 }
 
@@ -791,7 +868,7 @@ func (g *Group) SetName(name string) {
 	g.Info.Name = name
 }
 
-func (g *Group) GetName() string{
+func (g *Group) GetName() string {
 	return g.Info.Name
 }
 
