@@ -11,6 +11,7 @@ import (
 	"group-management-api/app/container"
 	"group-management-api/app/logger"
 	"group-management-api/domain"
+	"group-management-api/domain/model"
 	"group-management-api/domain/payload"
 	"net/http"
 	"net/http/httptest"
@@ -51,6 +52,7 @@ func RestImplTests(t *testing.T) {
 	tt := []SubTest{
 		{"User", UserTests},
 		{"Group", GroupTests},
+		{"Management", ManagementTests},
 		{"Authorization", AuthorizationTests},
 	}
 
@@ -502,6 +504,7 @@ var groupDelete = &Group{
 	},
 }
 
+
 func GroupTests(t *testing.T) {
 	tt := []SubTest{
 		{"Create", groupCreationTest},
@@ -696,10 +699,189 @@ func groupDeleteTest(t *testing.T) {
 	runApiRestTestCases(tt, t)
 }
 
+/* Management Tests */
+func ManagementTests(t *testing.T) {
+	tt := []SubTest{
+		{"Join", groupJoinTest},
+		{"Leave", groupLeaveTest},
+	}
+
+	for _, tc := range tt {
+		tc.Run(t)
+	}
+}
+
+func groupJoinTest(t *testing.T) {
+	tt := []RestTestCase{
+		NewRestBuilder("NotInGroupCheck").
+			Path("/users/current/group").
+			WithAuth(userMain).
+			Get().
+			ExpectCode(http.StatusNotFound).
+			Build(),
+
+		NewRestBuilder("NoMembersInGroup").
+			Path(fmt.Sprintf("/groups/%v", groupMain.GetID())).
+			Get().
+			ExpectCode(http.StatusOK).
+			Build(),
+
+		NewRestBuilder("WrongGroupIdFail").
+			Path("/users/current/group").
+			WithAuth(userMain).
+			Post().
+			WithBody(payload.JoinGroup{
+				GroupID: 2000,
+			}).
+			ExpectCode(http.StatusBadRequest).
+			ExpectBody(map[string]interface{}{
+				"err": isPresent,
+			}).
+			Build(),
+
+		NewRestBuilder("NotInGroupCheck").
+			Path("/users/current/group").
+			WithAuth(userMain).
+			Get().
+			ExpectCode(http.StatusNotFound).
+			Build(),
+
+		NewRestBuilder("RightGroupIdSuccess").
+			Path("/users/current/group").
+			WithAuth(userMain).
+			Post().
+			WithBody(payload.JoinGroup{
+				GroupID: model.GroupID(groupMain.GetID()),
+			}).
+			ExpectCode(http.StatusOK).
+			ExpectBody(map[string]interface{}{
+				"id": float64(groupMain.GetID()),
+				"name": groupMain.GetName(),
+			}).
+			Build(),
+
+		NewRestBuilder("UserHasGroup").
+			Path("/users/current").
+			WithAuth(userMain).
+			Get().
+			ExpectCode(http.StatusOK).
+			ExpectBody(map[string]interface{}{
+				"id": float64(userMain.GetID()),
+				"name": userMain.GetName(),
+				"group": map[string]interface{} {
+					"id": float64(groupMain.GetID()),
+			},
+			}).
+			Build(),
+	}
+	runApiRestTestCases(tt, t)
+}
+
+func groupLeaveTest(t *testing.T) {
+	tt := []RestTestCase{
+		NewRestBuilder("InGroupCheck").
+			Path("/users/current/group").
+			WithAuth(userMain).
+			Get().
+			ExpectCode(http.StatusOK).
+			ExpectBody(map[string]interface{}{
+				"id": float64(groupMain.GetID()),
+			}).
+			Build(),
+
+		NewRestBuilder("LeaveGroupManuallySuccess").
+			Path("/users/current/group").
+			WithAuth(userMain).
+			Delete().
+			ExpectCode(http.StatusNoContent).
+			Build(),
+
+		NewRestBuilder("CurrentUserHasNoGroup").
+			Path("/users/current").
+			WithAuth(userMain).
+			Get().
+			ExpectCode(http.StatusOK).
+			ExpectBody(map[string]interface{}{
+				"id": float64(userMain.GetID()),
+				"name": userMain.GetName(),
+				"group": isNotPresent,
+			}).
+			Build(),
+
+		NewRestBuilder("NoGroupInPath").
+			Path("/users/current/group").
+			WithAuth(userMain).
+			Get().
+			ExpectCode(http.StatusNotFound).
+			Build(),
+
+		NewRestBuilder("JoinGroupAgainSuccess").
+			Path("/users/current/group").
+			WithAuth(userMain).
+			Post().
+			WithBody(payload.JoinGroup{
+				GroupID: model.GroupID(groupMain.GetID()),
+			}).
+			ExpectCode(http.StatusOK).
+			ExpectBody(map[string]interface{}{
+				"id": float64(groupMain.GetID()),
+				"name": groupMain.GetName(),
+			}).
+			Build(),
+
+		NewRestBuilder("InAnotherGroupCheck").
+			Path("/users/current/group").
+			WithAuth(userMain).
+			Get().
+			ExpectCode(http.StatusOK).
+			ExpectBody(map[string]interface{}{
+				"id": float64(groupMain.GetID()),
+				"name": groupMain.GetName(),
+
+			}).
+			Build(),
+	}
+	runApiRestTestCases(tt, t)
+}
+
+
+var invalidTokenUser = &User{
+	Token: "invalidtoken",
+}
 
 func AuthorizationTests(t *testing.T) {
+	tt := []RestTestCase{
+		NewRestBuilder("ValidTokenAuthorized").
+			Path("/users/current").
+			WithAuth(userMain).
+			Get().
+			ExpectCode(http.StatusOK).
+			Build(),
 
+		NewRestBuilder("DeletedUserTokenUnauthorized").
+			Path("/users/current").
+			WithAuth(userDelete).
+			Get().
+			ExpectCode(http.StatusUnauthorized).
+			ExpectBody(map[string]interface{}{
+				"err": isPresent,
+			}).
+			Build(),
+
+		NewRestBuilder("InvalidUserTokenUnauthorized").
+			Path("/users/current").
+			WithAuth(invalidTokenUser).
+			Get().
+			ExpectCode(http.StatusUnauthorized).
+			ExpectBody(map[string]interface{}{
+				"err": isPresent,
+			}).
+			Build(),
+	}
+	runApiRestTestCases(tt, t)
 }
+
+/* OTHER STUFF */
 
 // For executing multiple test cases on REST API endpoints.
 func runApiRestTestCases(tc []RestTestCase, t *testing.T) {
