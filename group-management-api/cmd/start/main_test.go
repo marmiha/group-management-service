@@ -45,6 +45,7 @@ func TestAdapter(t *testing.T) {
 	}
 }
 
+/* REST ADAPTER IMPLEMENTATION TESTING */
 func RestImplTests(t *testing.T) {
 	tt := []SubTest{
 		{"UserTests", UserTests},
@@ -57,21 +58,7 @@ func RestImplTests(t *testing.T) {
 	}
 }
 
-func UserTests(t *testing.T) {
-
-	// SubTests
-	tt := []SubTest{
-		{"RegisterUser", userCreationTest},
-		{"LoginUser", userLoginTest},
-		{"ModifyUser", userModifyTest},
-		{"UnregisterUser", userUnregisterTest},
-	}
-
-	for _, tc := range tt {
-		tc.Run(t)
-	}
-}
-
+/* User Tests */
 var userMain = &User{
 	Info: payload.RegisterUserPayload{
 		Email:    "user@email.com",
@@ -88,6 +75,19 @@ var userDelete = &User{
 		Name:     "",
 	},
 	Token: "",
+}
+
+func UserTests(t *testing.T) {
+	tt := []SubTest{
+		{"RegisterUser", userCreationTest},
+		{"LoginUser", userLoginTest},
+		{"ModifyUser", userModifyTest},
+		{"UnregisterUser", userUnregisterTest},
+	}
+
+	for _, tc := range tt {
+		tc.Run(t)
+	}
 }
 
 func userCreationTest(t *testing.T) {
@@ -489,8 +489,106 @@ func userModifyTest(t *testing.T) {
 	runApiRestTestCases(tt, t)
 }
 
-func GroupTests(t *testing.T) {
+/* Group Tests */
+var groupMain = &Group{
+	Info: payload.CreateGroupPayload{
+		Name: "main",
+	},
+}
 
+var groupDelete = &Group{
+	Info: payload.CreateGroupPayload{
+		Name: "delete",
+	},
+}
+
+func GroupTests(t *testing.T) {
+	tt := []SubTest{
+		{"CreateGroup", groupCreationTest},
+	}
+
+	for _, tc := range tt {
+		tc.Run(t)
+	}
+}
+
+func groupCreationTest(t *testing.T) {
+	tt := []RestTestCase{
+		NewRestBuilder("NameCapsFails").
+			Path("/groups").
+			Post().
+			WithBody(payload.CreateGroupPayload{
+				Name: "cApS",
+			}).
+			ExpectCode(http.StatusBadRequest).
+			ExpectBody(map[string]interface{}{
+				"err": isPresent,
+			}).
+			Build(),
+
+		NewRestBuilder("GroupNotCreated").
+			Path("/groups/1").
+			Get().
+			ExpectCode(http.StatusNotFound).
+			Build(),
+
+		NewRestBuilder("CorrectNameSuccess").
+			Path("/groups").
+			Post().
+			WithBody(payload.CreateGroupPayload{
+				Name: groupMain.GetName(),
+			}).
+			ExpectCode(http.StatusCreated).
+			ExpectBody(map[string]interface{}{
+				"id": setIDgroup(groupMain),
+				"name": groupMain.GetName(),
+			}).
+			Build(),
+
+		NewRestBuilder("GroupCreatedCheck").
+			Path("/groups/1").
+			Get().
+			ExpectCode(http.StatusOK).
+			Build(),
+
+		NewRestBuilder("TakenNameFails").
+			Path("/groups").
+			Post().
+			WithBody(payload.CreateGroupPayload{
+				Name: groupMain.GetName(),
+			}).
+			ExpectCode(http.StatusBadRequest).
+			ExpectBody(map[string]interface{}{
+				"err": isPresent,
+			}).
+			Build(),
+
+		NewRestBuilder("GroupNotCreatedCheck").
+			Path("/groups/2").
+			Get().
+			ExpectCode(http.StatusNotFound).
+			Build(),
+
+		NewRestBuilder("NotTakenNameSuccess").
+			Path("/groups").
+			Post().
+			WithBody(payload.CreateGroupPayload{
+				Name: groupDelete.GetName(),
+			}).
+			ExpectCode(http.StatusCreated).
+			ExpectBody(map[string]interface{}{
+				"id": setIDgroup(groupDelete),
+				"name": groupDelete.GetName(),
+			}).
+			Build(),
+
+		NewRestBuilder("TwoGroupsCreatedCheck").
+			Path("/groups/2").
+			Get().
+			ExpectCode(http.StatusOK).
+			Build(),
+	}
+	runApiRestTestCases(tt, t)
 }
 
 func AuthorizationTests(t *testing.T) {
@@ -642,6 +740,17 @@ func setID(user *User) func(interface{}) error {
 	}
 }
 
+func setIDgroup(group *Group) func(interface{}) error {
+	return func(val interface{}) error {
+		id, ok := val.(float64)
+		if !ok {
+			return errors.New("value is not a number")
+		}
+		group.SetID(int(id))
+		return nil
+	}
+}
+
 func isPresent(val interface{}) error {
 	if val == nil {
 		return errors.New("field should be present")
@@ -666,6 +775,28 @@ func saveAuthToken(u *User) func(interface{}) error {
 		u.SetToken(tmpToken)
 		return nil
 	}
+}
+
+// Simple Group Struct for easier testing.
+type Group struct {
+	ID int
+	Info payload.CreateGroupPayload
+}
+
+func (g *Group) GetID() int{
+	return g.ID
+}
+
+func (g *Group) SetName(name string) {
+	g.Info.Name = name
+}
+
+func (g *Group) GetName() string{
+	return g.Info.Name
+}
+
+func (g *Group) SetID(id int) {
+	g.ID = id
 }
 
 // Simple User Struct for easier testing.
