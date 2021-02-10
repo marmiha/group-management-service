@@ -14,6 +14,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"os"
+	"strconv"
 	"testing"
 )
 
@@ -45,7 +46,7 @@ func TestAdapter(t *testing.T) {
 }
 
 func RestImplTests(t *testing.T) {
-	tt := []SubTest {
+	tt := []SubTest{
 		{"UserTests", UserTests},
 		{"GroupTests", GroupTests},
 		{"AuthorizationTests", AuthorizationTests},
@@ -59,9 +60,11 @@ func RestImplTests(t *testing.T) {
 func UserTests(t *testing.T) {
 
 	// SubTests
-	tt := []SubTest {
-		{"CreateUser", userCreationTest},
+	tt := []SubTest{
+		{"RegisterUser", userCreationTest},
 		{"LoginUser", userLoginTest},
+		{"ModifyUser", userModifyTest},
+		{"UnregisterUser", userUnregisterTest},
 	}
 
 	for _, tc := range tt {
@@ -80,9 +83,9 @@ var userMain = &User{
 
 var userDelete = &User{
 	Info: payload.RegisterUserPayload{
-		Email: "delete@email.com",
+		Email:    "delete@email.com",
 		Password: "delete",
-		Name: "",
+		Name:     "",
 	},
 	Token: "",
 }
@@ -96,7 +99,7 @@ func userCreationTest(t *testing.T) {
 			ExpectCode(http.StatusNotFound).
 			Build(),
 
-		NewRestBuilder("RegisterUserWithoutEmailFail").
+		NewRestBuilder("WithoutEmailFails").
 			Path("/users").
 			Post().
 			ExpectCode(http.StatusBadRequest).
@@ -110,7 +113,7 @@ func userCreationTest(t *testing.T) {
 			}).
 			Build(),
 
-		NewRestBuilder("RegisterUserWithInvalidEmailFail").
+		NewRestBuilder("WithInvalidEmailFails").
 			Path("/users").
 			Post().
 			ExpectCode(http.StatusBadRequest).
@@ -124,7 +127,7 @@ func userCreationTest(t *testing.T) {
 			}).
 			Build(),
 
-		NewRestBuilder("RegisterUserWithInvalidPasswordFail").
+		NewRestBuilder("WithInvalidPasswordFails").
 			Path("/users").
 			Post().
 			ExpectCode(http.StatusBadRequest).
@@ -138,7 +141,7 @@ func userCreationTest(t *testing.T) {
 			}).
 			Build(),
 
-		NewRestBuilder("RegisterUserWithCapsEmailFail").
+		NewRestBuilder("WithCapsEmailFails").
 			Path("/users").
 			Post().
 			ExpectCode(http.StatusBadRequest).
@@ -152,7 +155,7 @@ func userCreationTest(t *testing.T) {
 			}).
 			Build(),
 
-		NewRestBuilder("RegisterUserSuccess").
+		NewRestBuilder("CorrectPasswordAndEmailSuccess").
 			Path("/users").
 			Post().
 			ExpectCode(http.StatusCreated).
@@ -162,28 +165,30 @@ func userCreationTest(t *testing.T) {
 				Password: userMain.GetPassword(),
 			}).
 			ExpectBody(map[string]interface{}{
-				"token": isPresent,
+				"token": saveAuthToken(userMain),
 				"user": map[string]interface{}{
 					"email": userMain.GetEmail(),
 					"name":  userMain.GetName(),
+					"id":    setID(userMain),
 				},
 			}).
 			Build(),
 
-		NewRestBuilder("RegisterUserWithoutNameSuccess").
+		NewRestBuilder("WithoutNameSuccess").
 			Path("/users").
 			Post().
 			ExpectCode(http.StatusCreated).
 			WithBody(payload.RegisterUserPayload{
 				Email:    userDelete.GetEmail(),
 				Name:     "",
-				Password: userMain.GetPassword(),
+				Password: userDelete.GetPassword(),
 			}).
 			ExpectBody(map[string]interface{}{
-				"token": isPresent,
+				"token": saveAuthToken(userDelete),
 				"user": map[string]interface{}{
 					"email": userDelete.GetEmail(),
 					"name":  "",
+					"id":    setID(userDelete),
 				},
 			}).
 			Build(),
@@ -198,7 +203,7 @@ func userCreationTest(t *testing.T) {
 			}).
 			Build(),
 
-		NewRestBuilder("RegisterUserWithSameEmailFails").
+		NewRestBuilder("WithTakenEmailFails").
 			Path("/users").
 			Post().
 			ExpectCode(http.StatusBadRequest).
@@ -211,6 +216,7 @@ func userCreationTest(t *testing.T) {
 				"err": domain.ErrUserWithEmailAlreadyExists.Error(),
 			}).
 			Build(),
+
 	}
 
 	runApiRestTestCases(tt, t)
@@ -269,6 +275,220 @@ func userLoginTest(t *testing.T) {
 	runApiRestTestCases(tt, t)
 }
 
+func userUnregisterTest(t *testing.T) {
+	tt := []RestTestCase{
+		NewRestBuilder("DeleteUserWrongPasswordFail").
+			Path("/users/current").
+			Delete().
+			WithAuth(userDelete).
+			WithBody(payload.UnregisterUserPayload{
+				Password: "wrongpassword",
+			}).
+			ExpectCode(http.StatusBadRequest).
+			Build(),
+
+		NewRestBuilder("DeleteUserSuccess").
+			Path("/users/current").
+			Delete().
+			ExpectCode(http.StatusNoContent).
+			WithAuth(userDelete).
+			WithBody(payload.UnregisterUserPayload{
+				Password: userDelete.GetPassword(),
+			}).
+			Build(),
+
+		NewRestBuilder("DeletedUserNotFoundAnymore").
+			Path("/users/" + strconv.Itoa(userDelete.GetID())).
+			Get().
+			ExpectCode(http.StatusNotFound).
+			Build(),
+	}
+	runApiRestTestCases(tt, t)
+}
+
+func userModifyTest(t *testing.T) {
+	firstName := "first new name"
+	secondName := "second new name"
+	firstEmail := "nottaken@first.com"
+	secondEmail := "nottaken@second.com"
+	newPassword := "new_password"
+
+	tt := []RestTestCase{
+		NewRestBuilder("WithEmptyPayload").
+			Path("/users/current").
+			Patch().
+			WithAuth(userMain).
+			WithBody(payload.ModifyUserPayload{}).
+			ExpectCode(http.StatusBadRequest).
+			ExpectBody(map[string]interface{}{
+				"err": isPresent,
+			}).
+			Build(),
+
+		NewRestBuilder("OnlyNameSuccess").
+			Path("/users/current").
+			Patch().
+			WithAuth(userMain).
+			WithBody(payload.ModifyUserPayload{
+				Name: firstName,
+			}).
+			ExpectCode(http.StatusOK).
+			ExpectBody(map[string]interface{}{
+				"name": firstName,
+			}).
+			After(func() {
+				userMain.SetName(firstName)
+			}).
+			Build(),
+
+		NewRestBuilder("TakenEmailFails").
+			Path("/users/current").
+			Patch().
+			WithAuth(userMain).
+			WithBody(payload.ModifyUserPayload{
+				Email: userMain.GetEmail(),
+			}).
+			ExpectCode(http.StatusBadRequest).
+			ExpectBody(map[string]interface{}{
+				"err": isPresent,
+			}).
+			Build(),
+
+		NewRestBuilder("EmailWithCapsFails").
+			Path("/users/current").
+			Patch().
+			WithAuth(userMain).
+			WithBody(payload.ModifyUserPayload{
+				Email: "eMaIl@CaPs.com",
+			}).
+			ExpectCode(http.StatusBadRequest).
+			ExpectBody(map[string]interface{}{
+				"err": isPresent,
+			}).
+			Build(),
+
+		NewRestBuilder("NotTakenEmailSuccess").
+			Path("/users/current").
+			Patch().
+			WithAuth(userMain).
+			WithBody(payload.ModifyUserPayload{
+				Email: firstEmail,
+			}).
+			ExpectCode(http.StatusOK).
+			ExpectBody(map[string]interface{}{
+				"email": firstEmail,
+			}).
+			After(func() {
+				userMain.SetEmail(firstEmail)
+			}).
+			Build(),
+
+		NewRestBuilder("NotTakenEmailAndNameSuccess").
+			Path("/users/current").
+			Patch().
+			WithAuth(userMain).
+			WithBody(payload.ModifyUserPayload{
+				Name: secondName,
+				Email: secondEmail,
+			}).
+			ExpectCode(http.StatusOK).
+			ExpectBody(map[string]interface{}{
+				"name": secondName,
+				"email": secondEmail,
+			}).
+			After(func() {
+				userMain.SetEmail(secondEmail)
+				userMain.SetName(secondName)
+			}).
+			Build(),
+
+		NewRestBuilder("ChangePasswordWrongCurrentPasswordFails").
+			Path("/users/current/attributes/password").
+			Put().
+			WithAuth(userMain).
+			WithBody(payload.ChangePasswordPayload{
+				CurrentPassword: "wrong_password",
+				NewPassword: newPassword,
+			}).
+			ExpectCode(http.StatusBadRequest).
+			ExpectBody(map[string]interface{}{
+				"err": isPresent,
+			}).
+			Build(),
+
+		NewRestBuilder("PasswordDidNotChange").
+			Path("/login").
+			Post().
+			ExpectCode(http.StatusBadRequest).
+			WithBody(payload.CredentialsUserPayload{
+				Email:    secondEmail,
+				Password: newPassword,
+			}).
+			ExpectBody(map[string]interface{}{
+				"err": isPresent,
+			}).
+			Build(),
+
+		NewRestBuilder("ChangePasswordEmptyNewFail").
+			Path("/users/current/attributes/password").
+			Put().
+			WithAuth(userMain).
+			WithBody(payload.ChangePasswordPayload{
+				CurrentPassword: userMain.GetPassword(),
+				NewPassword: "f",
+			}).
+			ExpectCode(http.StatusBadRequest).
+			ExpectBody(map[string]interface{}{
+				"err": isPresent,
+			}).
+			Build(),
+
+		NewRestBuilder("PasswordDidNotChange").
+			Path("/login").
+			Post().
+			ExpectCode(http.StatusBadRequest).
+			WithBody(payload.CredentialsUserPayload{
+				Email:    secondEmail,
+				Password: newPassword,
+			}).
+			ExpectBody(map[string]interface{}{
+				"err": isPresent,
+			}).
+			Build(),
+
+		NewRestBuilder("PasswordChangeSuccess").
+			Path("/users/current/attributes/password").
+			Put().
+			WithAuth(userMain).
+			WithBody(payload.ChangePasswordPayload{
+				CurrentPassword: userMain.GetPassword(),
+				NewPassword: newPassword,
+			}).
+			ExpectCode(http.StatusOK).
+			ExpectBody(map[string]interface{}{
+				"id": float64(userMain.GetID()),
+			}).
+			After(func() {
+				userMain.SetPassword(newPassword)
+			}).
+			Build(),
+
+		NewRestBuilder("PasswordDidChange").
+			Path("/login").
+			Post().
+			ExpectCode(http.StatusOK).
+			WithBody(payload.CredentialsUserPayload{
+				Email:    secondEmail,
+				Password: newPassword,
+			}).
+			ExpectBody(map[string]interface{}{
+				"token": isPresent,
+			}).
+			Build(),
+	}
+	runApiRestTestCases(tt, t)
+}
+
 func GroupTests(t *testing.T) {
 
 }
@@ -321,6 +541,17 @@ func runApiRestTestCases(tc []RestTestCase, t *testing.T) {
 
 				// Check if the response body includes the wanted fields.
 				firstIncludedInOther(tc.BodyRes, bodyRes, t)
+			}
+
+			// Callbacks based on success
+			if t.Failed()  {
+				if tc.FFail != nil {
+					tc.FFail()
+				}
+			} else {
+				if tc.FSucc != nil {
+					tc.FSucc()
+				}
 			}
 		})
 	}
@@ -400,6 +631,17 @@ func logField(key string, t *testing.T) func(interface{}) error {
 	}
 }
 
+func setID(user *User) func(interface{}) error {
+	return func(val interface{}) error {
+		id, ok := val.(float64)
+		if !ok {
+			return errors.New("value is not a number")
+		}
+		user.SetID(int(id))
+		return nil
+	}
+}
+
 func isPresent(val interface{}) error {
 	if val == nil {
 		return errors.New("field should be present")
@@ -428,6 +670,7 @@ func saveAuthToken(u *User) func(interface{}) error {
 
 // Simple User Struct for easier testing.
 type User struct {
+	ID    int
 	Info  payload.RegisterUserPayload
 	Token string
 }
@@ -446,6 +689,14 @@ func (u *User) GetPassword() string {
 
 func (u *User) GetToken() string {
 	return u.Token
+}
+
+func (u *User) GetID() int {
+	return u.ID
+}
+
+func (u *User) SetID(id int) {
+	u.ID = id
 }
 
 func (u *User) SetName(name string) {
@@ -467,10 +718,10 @@ func (u *User) SetToken(token string) {
 // SubTest class.
 type SubTest struct {
 	Name string
-	Fun func(t *testing.T)
+	Fun  func(t *testing.T)
 }
 
-func (st SubTest) Run(t *testing.T)  {
+func (st SubTest) Run(t *testing.T) {
 	t.Run(st.Name, func(t *testing.T) {
 		st.Fun(t)
 	})
@@ -485,6 +736,8 @@ type RestTestCase struct {
 	RespCode int
 	BodyReq  interface{}
 	BodyRes  map[string]interface{}
+	FFail    func()
+	FSucc    func()
 }
 
 // RestTestCaseBuilder for easier test reading and writing.
@@ -502,6 +755,8 @@ func NewRestBuilder(name string) *RestTestCaseBuilder {
 			RespCode: http.StatusOK,
 			BodyReq:  nil,
 			BodyRes:  nil,
+			FSucc:    nil,
+			FFail:    nil,
 		}}
 }
 
@@ -552,6 +807,16 @@ func (r *RestTestCaseBuilder) ExpectBody(body map[string]interface{}) *RestTestC
 
 func (r *RestTestCaseBuilder) WithAuth(user *User) *RestTestCaseBuilder {
 	r.tc.Auth = user
+	return r
+}
+
+func (r *RestTestCaseBuilder) After(fun func()) *RestTestCaseBuilder {
+	r.tc.FSucc = fun
+	return r
+}
+
+func (r *RestTestCaseBuilder) Catch(fun func()) *RestTestCaseBuilder {
+	r.tc.FSucc = fun
 	return r
 }
 
