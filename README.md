@@ -124,4 +124,5 @@ It's a basic function returning an error. This is set while initializing the app
 start listening and serving on some port. This is then called whenever after the container is successfully initialized.
 
 The following picture also visualizes the concept of interfaces and their implementations.
+
 ![structure_graph](https://i.imgur.com/1hxYqg8.jpeg)
