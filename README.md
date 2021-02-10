@@ -122,3 +122,6 @@ to be closed before exiting, therefore the factory method for the postgres data 
 connection shutdownable. Like the mentioned, the application also has to have an entry point which is saved inside the container.
 It's a basic function returning an error. This is set while initializing the app. For example the Rest Adapter sets the function to
 start listening and serving on some port. This is then called whenever after the container is successfully initialized.
+
+The following picture also visualizes the concept of interfaces and their implementations.
+![structure_graph](https://i.imgur.com/1hxYqg8.jpeg)
