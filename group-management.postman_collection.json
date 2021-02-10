@@ -1,0 +1,499 @@
+{
+	"info": {
+		"_postman_id": "28d04e5f-f121-4677-b758-2fbff51c78ab",
+		"name": "GroupManagement",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Groups",
+			"item": [
+				{
+					"name": "Group",
+					"item": [
+						{
+							"name": "Users",
+							"item": [
+								{
+									"name": "GetUsersOfGroup",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": ""
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "GetGroup",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{address}}/{{api-v1}}/groups/1",
+									"host": [
+										"{{address}}"
+									],
+									"path": [
+										"{{api-v1}}",
+										"groups",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "DeleteGroup",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{address}}/{{api-v1}}/groups/1",
+									"host": [
+										"{{address}}"
+									],
+									"path": [
+										"{{api-v1}}",
+										"groups",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "ModifyGroup",
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"Dominators\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{address}}/{{api-v1}}/groups/1",
+									"host": [
+										"{{address}}"
+									],
+									"path": [
+										"{{api-v1}}",
+										"groups",
+										"1"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "GetGroups",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{address}}/{{api-v1}}/groups",
+							"host": [
+								"{{address}}"
+							],
+							"path": [
+								"{{api-v1}}",
+								"groups"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CreateGroup",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Assistan Manager\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{address}}/{{api-v1}}/groups",
+							"host": [
+								"{{address}}"
+							],
+							"path": [
+								"{{api-v1}}",
+								"groups"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "Current",
+					"item": [
+						{
+							"name": "Group",
+							"item": [
+								{
+									"name": "GetCurrentUserGroup",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": ""
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "JoinGroup",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"group_id\": 1\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{address}}/{{api-v1}}/users/current/group",
+											"host": [
+												"{{address}}"
+											],
+											"path": [
+												"{{api-v1}}",
+												"users",
+												"current",
+												"group"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "LeaveGroup",
+									"request": {
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "{{address}}/{{api-v1}}/users/current/group",
+											"host": [
+												"{{address}}"
+											],
+											"path": [
+												"{{api-v1}}",
+												"users",
+												"current",
+												"group"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "Attributes",
+							"item": [
+								{
+									"name": "Password",
+									"item": [
+										{
+											"name": "ChangePassword",
+											"request": {
+												"method": "PUT",
+												"header": [],
+												"body": {
+													"mode": "raw",
+													"raw": "{\r\n    \"current_password\": \"{{user-password}}\",\r\n    \"new_password\": \"new_password\"\r\n}",
+													"options": {
+														"raw": {
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{address}}/{{api-v1}}/users/current/attributes/password",
+													"host": [
+														"{{address}}"
+													],
+													"path": [
+														"{{api-v1}}",
+														"users",
+														"current",
+														"attributes",
+														"password"
+													]
+												}
+											},
+											"response": []
+										}
+									]
+								}
+							]
+						},
+						{
+							"name": "GetCurrentUser",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{address}}/{{api-v1}}/users/current",
+									"host": [
+										"{{address}}"
+									],
+									"path": [
+										"{{api-v1}}",
+										"users",
+										"current"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "ModifyUser",
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"Michael Scott\",\r\n    \"email\": \"michael.scott@dunder-mifflin.com\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{address}}/{{api-v1}}/users/current",
+									"host": [
+										"{{address}}"
+									],
+									"path": [
+										"{{api-v1}}",
+										"users",
+										"current"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Unregister",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n   \"password\" : \"{{user-password}}\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{address}}/{{api-v1}}/users/current",
+									"host": [
+										"{{address}}"
+									],
+									"path": [
+										"{{api-v1}}",
+										"users",
+										"current"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"auth": {
+						"type": "bearer",
+						"bearer": [
+							{
+								"key": "token",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJzdGFuZGFyZF9jbGFpbXMiOnsiZXhwIjoxNjEyODM2MjQ0LCJqdGkiOiIxIiwiaWF0IjoxNjEyODAwMjQ0LCJpc3MiOiJHcm91cE1hbmFnZW1lbnRBcHAifX0.PETGho-T3tEAbZ6XpJskyYrzaUBhyjRY9cl3AIMJoyA",
+								"type": "string"
+							}
+						]
+					},
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "GetUsers",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{address}}/{{api-v1}}/users",
+							"host": [
+								"{{address}}"
+							],
+							"path": [
+								"{{api-v1}}",
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetUser",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{address}}/{{api-v1}}/users/1",
+							"host": [
+								"{{address}}"
+							],
+							"path": [
+								"{{api-v1}}",
+								"users",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Register",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"{{user-email}}\",\r\n    \"name\": \"{{user-name}}\",\r\n    \"password\": \"{{user-password}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{address}}/{{api-v1}}/users",
+							"host": [
+								"{{address}}"
+							],
+							"path": [
+								"{{api-v1}}",
+								"users"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Login",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\": \"{{user-email}}\",\r\n    \"password\": \"{{user-password}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{address}}/{{api-v1}}/login",
+					"host": [
+						"{{address}}"
+					],
+					"path": [
+						"{{api-v1}}",
+						"login"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "address",
+			"value": "localhost:3000"
+		},
+		{
+			"key": "api-v1",
+			"value": "api/v1"
+		},
+		{
+			"key": "user-name",
+			"value": "Dwight Schrute"
+		},
+		{
+			"key": "user-email",
+			"value": "dwight.schrute@dunder-mifflin.com"
+		},
+		{
+			"key": "user-password",
+			"value": "password"
+		}
+	]
+}
