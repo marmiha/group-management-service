@@ -51,7 +51,8 @@ the same in `docker-compose.test.yml` and running:
 
 * `docker-compose -f docker-compose.test.yml up --build --abort-on-container-exit`
 
-By default `docker-compose.test.yml` tests the default configuration of `docker-compose.yml`.
+By default `docker-compose.test.yml` tests the default configuration of `docker-compose.yml`. Reminder, sometimes the microservice
+tries to accept database connection before it's running. Stop the images and run the commands again, it should do the job. :)
 
 ### REST OpenAPI specification
 
