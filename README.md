@@ -36,8 +36,7 @@ Set the following environment variables (each have their default values). The on
 
 __Run__ the following commands for running the app:
 
-1) `docker-compose build`
-2) `docker-compose up`
+- `docker-compose up --build --abort-on-container-exit`
 
 __Tests__ are based on use cases and are executed on adapter level, therefore
 each adapter has its own tests. These are discriminated between by the `Adapter.Impl`. At this moment only `rest` is supported
