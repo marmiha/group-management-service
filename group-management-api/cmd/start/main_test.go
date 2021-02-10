@@ -49,9 +49,9 @@ func TestAdapter(t *testing.T) {
 /* REST ADAPTER IMPLEMENTATION TESTING */
 func RestImplTests(t *testing.T) {
 	tt := []SubTest{
-		{"UserTests", UserTests},
-		{"GroupTests", GroupTests},
-		{"AuthorizationTests", AuthorizationTests},
+		{"User", UserTests},
+		{"Group", GroupTests},
+		{"Authorization", AuthorizationTests},
 	}
 
 	for _, st := range tt {
@@ -80,10 +80,10 @@ var userDelete = &User{
 
 func UserTests(t *testing.T) {
 	tt := []SubTest{
-		{"RegisterUser", userCreationTest},
-		{"LoginUser", userLoginTest},
-		{"ModifyUser", userModifyTest},
-		{"UnregisterUser", userUnregisterTest},
+		{"Register", userCreationTest},
+		{"Login", userLoginTest},
+		{"Modify", userModifyTest},
+		{"Unregister", userUnregisterTest},
 	}
 
 	for _, tc := range tt {
@@ -504,8 +504,9 @@ var groupDelete = &Group{
 
 func GroupTests(t *testing.T) {
 	tt := []SubTest{
-		{"CreateGroup", groupCreationTest},
-		{"ModifyGroup", groupModifyTest},
+		{"Create", groupCreationTest},
+		{"Modify", groupModifyTest},
+		{"Delete", groupDeleteTest},
 	}
 
 	for _, tc := range tt {
@@ -668,6 +669,34 @@ func groupModifyTest(t *testing.T) {
 	}
 	runApiRestTestCases(tt, t)
 }
+
+func groupDeleteTest(t *testing.T) {
+	tt := []RestTestCase{
+		NewRestBuilder("GroupExists").
+			Path(fmt.Sprintf("/groups/%v", groupDelete.GetID())).
+			Get().
+			ExpectCode(http.StatusOK).
+			ExpectBody(map[string]interface{}{
+				"id": float64(groupDelete.GetID()),
+			}).
+			Build(),
+
+		NewRestBuilder("SuccessfulDelete").
+			Path(fmt.Sprintf("/groups/%v", groupDelete.GetID())).
+			Delete().
+			ExpectCode(http.StatusNoContent).
+			Build(),
+
+		NewRestBuilder("GroupDoesNotExist").
+			Path(fmt.Sprintf("/groups/%v", groupDelete.GetID())).
+			Get().
+			ExpectCode(http.StatusNotFound).
+			Build(),
+	}
+	runApiRestTestCases(tt, t)
+}
+
+
 func AuthorizationTests(t *testing.T) {
 
 }
