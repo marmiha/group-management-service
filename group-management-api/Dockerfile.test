@@ -1,0 +1,8 @@
+FROM golang:1.15.6-alpine3.12
+WORKDIR /group-management-api
+ENV PORT=3000
+ENV CGO_ENABLED=0
+COPY . .
+RUN go mod download
+EXPOSE $PORT
+ENTRYPOINT ["go", "test", "-v" , "/group-management-api/cmd/start/main_test.go"]

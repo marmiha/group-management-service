@@ -9,12 +9,12 @@ func main() {
 	// Init the application.
 	con, err := app.InitApp()
 	if err != nil {
-		logger.Log.WithField("err", err).Info("Something went wrong initializing the application.")
-	} else {
-		// Start the application.
-		if err := con.StartApp(); err != nil {
-			logger.Log.WithField("err", err).Info("Could not start application.")
-		}
+		logger.Log.WithField("err", err).Fatal("Something went wrong initializing the application.")
+	}
+
+	// Start the application.
+	if err := con.StartApp(); err != nil {
+		logger.Log.WithField("err", err).Fatal("Could not start application.")
 	}
 
 	// Defer the shut down off all the queued things.

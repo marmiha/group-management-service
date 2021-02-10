@@ -1,0 +1,43 @@
+version: '3.8'
+services:
+  group-management-api:
+    image: group-management-api-test
+    depends_on:
+      - postgres-data
+    build:
+      context: ./group-management-api
+      dockerfile: Dockerfile.test
+    environment:
+      - ExposedPort=3000
+      - LogLevel=error
+      - DataService.User.Impl=postgresds
+      - DataService.Group.Impl=postgresds
+      - DataService.Postgres.Host=postgres-data:5432
+      - DataService.Postgres.User=defaultuser
+      - DataService.Postgres.Password=defaultpassword
+      - DataService.Postgres.ConnPoolSize=20
+      - DataService.Postgres.DropTableOnConn=true
+      - Adapter.Impl=rest
+      - Adapter.Rest.JwtKey=defaultjwtkey
+      - Adapter.Rest.EnableLogging=false
+    ports:
+    - ${ExposedPort:-3000}:${ExposedPort-3000}
+    networks:
+      - group-management
+  postgres-data:
+    image: group-management-postgres
+    build:
+      context: ./postgres-data
+    environment:
+      - POSTGRES_USER=defaultuser
+      - POSTGRES_PASSWORD=defaultpassword
+    networks:
+      - group-management
+    logging:
+      driver: none
+
+volumes:
+  logs:
+
+networks:
+  group-management:
