@@ -46,7 +46,7 @@ as there is no other adapter implementation, but the codebase supports ease of a
 For each configuration of `docker-compose.yml` with the mentioned environment variables you can test it by setting them the
 same in `docker-compose.test.yml` and running:
 
- * `go test -v cmd/start/main_test.go -c cmd/start/main_test.go -o test.exe`
+ * `docker-compose -f docker-compose.test.yml up --build --abort-on-container-exit`
 
 By default `docker-compose.test.yml` tests the default configuration of `docker-compose.yml`.
 
